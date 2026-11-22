@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evergreen Hills Christmas Tree Farm Light Show | Holland, NY</title>
+    <style>
+        :root {
+            --bg-dark: #0b1612;
+            --card-bg: #13241e;
+            --accent-gold: #f5b041;
+            --accent-red: #d9383a;
+            --accent-green: #2ecc71;
+            --text-light: #f4f7f5;
+            --text-muted: #b8c7c1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Festive Top Lights Bar */
+        .lights-bar {
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--accent-red) 0px,
+                var(--accent-red) 20px,
+                var(--accent-gold) 20px,
+                var(--accent-gold) 40px,
+                var(--accent-green) 40px,
+                var(--accent-green) 60px
+            );
+        }
+
+        header {
+            text-align: center;
+            padding: 3.5rem 1.5rem 2.5rem;
+            background: radial-gradient(circle at top, #1b362d 0%, var(--bg-dark) 80%);
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: rgba(245, 176, 65, 0.15);
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 0.35rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+        }
+
+        /* Big Radio Station Callout */
+        .radio-box {
+            display: inline-block;
+            background-color: var(--accent-red);
+            color: #ffffff;
+            padding: 0.85rem 1.75rem;
+            border-radius: 12px;
+            font-size: 1.35rem;
+            font-weight: 800;
+            box-shadow: 0 6px 20px rgba(217, 56, 58, 0.35);
+            margin-top: 0.5rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem 4rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 1.5rem;
+        }
+
+        .card h2 {
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card strong {
+            color: var(--text-light);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-green);
+            color: #07120e;
+            text-decoration: none;
+            font-weight: 700;
+            padding: 0.65rem 1.2rem;
+            border-radius: 8px;
+            margin-top: 0.75rem;
+            font-size: 0.95rem;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        /* Etiquette & Viewing Tips */
+        .tips-list {
+            list-style: none;
+            margin-top: 0.5rem;
+        }
+
+        .tips-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .tips-list li::before {
+            content: "❄";
+            position: absolute;
+            left: 0;
+            color: var(--accent-gold);
+        }
+
+        /* YouTube Video Section */
+        .video-section {
+            margin-top: 2rem;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .video-placeholder {
+            background-color: #0e1c17;
+            border: 2px dashed rgba(245, 176, 65, 0.35);
+            border-radius: 12px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .video-placeholder span {
+            display: block;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 0.35rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.85rem;
+            }
+            .radio-box {
+                font-size: 1.15rem;
+                padding: 0.75rem 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lights-bar"></div>
+
+    <header>
+        <div class="badge">Celebrating Our 3rd Season</div>
+        <h1>Evergreen Hills Christmas Tree Farm Light Show</h1>
+        <p class="subtitle">Thousands of synchronized lights dancing to over 30 minutes of holiday music in Holland, NY.</p>
+        <div class="radio-box">📻 Tune Your Radio to 88.1 FM</div>
+    </header>
+
+    <main class="container">
+        <!-- Key Info Cards -->
+        <div class="grid">
+            <div class="card">
+                <h2>📅 Dates &amp; Hours</h2>
+                <p><strong>Season:</strong> Friday, Nov 27, 2026 – Jan 1, 2027</p>
+                <p><strong>Schedule:</strong> 7 Days a Week</p>
+                <p><strong>Showtime:</strong> 5:00 PM – 9:30 PM Nightly</p>
+                <p><em>30+ minute music loop runs continuously.</em></p>
+            </div>
+
+            <div class="card">
+                <h2>📍 Location &amp; Parking</h2>
+                <p><strong>Address:</strong><br>7586 Vermont Hill Road<br>Holland, NY 14080</p>
+                <p>Pull into the <strong>large parking lot near the farm sign</strong> for the best view.</p>
+                <a class="btn" href="https://google.com" target="_blank" rel="noopener">Get Google Maps Directions</a>
+            </div>
+        </div>
+
+        <!-- Viewing Etiquette & Alternative Display -->
+        <div class="card">
+            <h2>🚗 Visitor Tips &amp; Etiquette</h2>
+            <ul class="tips-list">
+                <li><strong>Dim Your Headlights:</strong> Please turn off your headlights (use parking lights only) while parked so everyone can enjoy the lights without glare.</li>
+                <li><strong>Be Courteous to Neighbors:</strong> Keep music at a respectful volume and avoid blocking Vermont Hill Road or neighboring driveways.</li>
+                <li><strong>Prefer Steady Lights?</strong> Not feeling all the flashing lights? Drive by the front of the property to wave at Santa and view a smaller, steady light display.</li>
+            </ul>
+        </div>
+
+        <!-- YouTube Video Section -->
+        <div class="card video-section">
+            <h2>🎬 Past Season Highlights</h2>
+            <p>Catch clips from our first two seasons while you wait for showtime!</p>
+            <div class="video-grid">
+                <!-- TO ADD A YOUTUBE VIDEO: Replace one of these placeholder divs with your YouTube "Embed" iframe code -->
+                <div class="video-placeholder">
+                    <span>YouTube Video #1 Placeholder</span>
+                    Paste your YouTube embed code here when ready!
+                </div>
+                <div class="video-placeholder">
+                    <span>YouTube Video #2 Placeholder</span>
+                    Paste your YouTube embed code here when ready!
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Evergreen Hills Christmas Tree Farm Light Show • Holland, NY</p>
+        <p style="margin-top: 0.4rem;">
+            Listed on <a href="https://www.christmaslightfinder.com/displays/display-details/?id=5429" target="_blank" rel="noopener">The Original Worldwide Christmas Light Finder</a>
+        </p>
+    </footer>
+
+</body>
+</html>
