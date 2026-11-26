@@ -401,6 +401,28 @@
       margin-top: 0.75rem;
     }
 
+    /* 48-Hour Hazardous Weather Alert Box */
+    .hazard-box {
+      margin-top: 1rem;
+      padding: 0.95rem 1.2rem;
+      border-radius: 12px;
+      font-size: 0.96rem;
+      border: 1px solid var(--border);
+      background: var(--bg-card-alt);
+    }
+
+    .hazard-box.safe {
+      background: rgba(42, 157, 143, 0.15);
+      border-color: rgba(42, 157, 143, 0.5);
+      color: #d8fff8;
+    }
+
+    .hazard-box.warning {
+      background: rgba(214, 40, 40, 0.22);
+      border-color: rgba(244, 196, 48, 0.75);
+      color: #fff3cd;
+    }
+
     .temp-big {
       font-size: 2.6rem;
       font-weight: 800;
@@ -534,7 +556,7 @@
         <h2>🎅 Viewing Tips &amp; Wave to Santa!</h2>
         <ul class="highlight-list">
           <li>
-            <strong>🚗 Driveway Viewing &amp; Headlights:</strong> Feel free to pull off the road into our driveway to enjoy the show, and please be courteous to others and our neighbors by dimming your headlights when viewing.
+            <strong>🚗 Driveway Viewing &amp; Headlights:</strong> Feel free to pull off the road into our driveway to enjoy the show. Please be courteous to others and our neighbors by dimming your headlights when viewing.
           </li>
           <li>
             <strong>👋 Wave to Santa Up Front:</strong> Be sure to check out the small steady display of lights at the front of the property where you can wave to Santa!
@@ -642,7 +664,7 @@
           <span id="status-message">Driveway is cleared and operations are normal</span>
         </div>
         <p style="color: var(--text-muted); font-size: 0.95rem;">
-          Scheduled to run normal hours (5:00 PM – 9:00 PM daily, Nov 27 – Jan 1). If extreme Western NY winds or blizzards ever affect the lights or driveway conditions, we will update the status line above and post under Recent Updates!
+          Scheduled to run normal hours (5:00 PM – 9:00 PM). If poor weather conditions impact the light show or driveway clearing operations, updates will be provided here.
         </p>
       </div>
 
@@ -652,6 +674,11 @@
 
         <div id="weather-widget" class="weather-box">
           <div>Loading live Holland, NY weather...</div>
+        </div>
+
+        <!-- 48-Hour Hazardous Weather Spot Forecast Check (6"+ snow or 45+ mph gusts) -->
+        <div id="hazard-alert" class="hazard-box">
+          Checking 48-hour spot forecast for snow &amp; wind...
         </div>
 
         <div class="sub-map-links" style="margin-top: 1rem;">
@@ -798,12 +825,13 @@
     }
     updateShowStatus();
 
-    // 6. Live Weather Fetch for 42.675750, -78.537713 (Holland, NY) via Open-Meteo (NOAA/NWS models)
+    // 6. Live Weather + 48-Hour Spot Hazard Check (6"+ Snow or 45+ mph Wind Gusts)
     async function loadWeather() {
       const box = document.getElementById('weather-widget');
+      const hazardBox = document.getElementById('hazard-alert');
       try {
         const res = await fetch(
-          "https://api.open-meteo.com/v1/forecast?latitude=42.67575&longitude=-78.537713&current=temperature_2m,apparent_temperature,snowfall,wind_speed_10m,weather_code&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York"
+          "https://api.open-meteo.com/v1/forecast?latitude=42.67575&longitude=-78.537713&current=temperature_2m,apparent_temperature,snowfall,wind_speed_10m,weather_code&daily=snowfall_sum,wind_gusts_10m_max&hourly=snowfall,wind_gusts_10m&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York"
         );
         const data = await res.json();
         const cur = data.current;
@@ -824,8 +852,51 @@
             <div><strong>Current Snowfall:</strong> ${cur.snowfall}"</div>
           </div>
         `;
+
+        // Evaluate Today (index 0) and Tomorrow (index 1) + rolling next 48 hours from spot forecast
+        const snowToday = (data.daily && data.daily.snowfall_sum) ? (data.daily.snowfall_sum[0] || 0) : 0;
+        const snowTomorrow = (data.daily && data.daily.snowfall_sum) ? (data.daily.snowfall_sum[1] || 0) : 0;
+        const gustToday = (data.daily && data.daily.wind_gusts_10m_max) ? (data.daily.wind_gusts_10m_max[0] || 0) : 0;
+        const gustTomorrow = (data.daily && data.daily.wind_gusts_10m_max) ? (data.daily.wind_gusts_10m_max[1] || 0) : 0;
+
+        // Also compute rolling 48-hour snowfall & max wind gust starting from the current Eastern hour
+        let rolling48Snow = 0;
+        let rolling48Gust = 0;
+        if (data.hourly && data.hourly.time) {
+          const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+          const pad = n => String(n).padStart(2, '0');
+          const curHourPrefix = `${nowNY.getFullYear()}-${pad(nowNY.getMonth() + 1)}-${pad(nowNY.getDate())}T${pad(nowNY.getHours())}`;
+          let startIdx = data.hourly.time.findIndex(t => t.startsWith(curHourPrefix));
+          if (startIdx < 0) startIdx = 0;
+          const endIdx = Math.min(startIdx + 48, data.hourly.time.length);
+          for (let i = startIdx; i < endIdx; i++) {
+            rolling48Snow += (data.hourly.snowfall[i] || 0);
+            if ((data.hourly.wind_gusts_10m[i] || 0) > rolling48Gust) {
+              rolling48Gust = data.hourly.wind_gusts_10m[i];
+            }
+          }
+        }
+
+        const warnings = [];
+        if (snowToday >= 6 || snowTomorrow >= 6 || rolling48Snow >= 6) {
+          const peakSnow = Math.max(snowToday, snowTomorrow, rolling48Snow).toFixed(1);
+          warnings.push(`Heavy snowfall forecast (up to ${peakSnow}" expected within the next 48 hours)`);
+        }
+        if (gustToday >= 45 || gustTomorrow >= 45 || rolling48Gust >= 45) {
+          const peakGust = Math.round(Math.max(gustToday, gustTomorrow, rolling48Gust));
+          warnings.push(`High wind gusts forecast (up to ${peakGust} mph expected within the next 48 hours)`);
+        }
+
+        if (warnings.length > 0) {
+          hazardBox.className = "hazard-box warning";
+          hazardBox.innerHTML = `<strong>⚠️ Weather Advisory:</strong> ${warnings.join(" • ")}. Please check Current Show Status above before heading out.`;
+        } else {
+          hazardBox.className = "hazard-box safe";
+          hazardBox.innerHTML = `✅ No hazardous weather expected in the next 48 hours`;
+        }
       } catch (e) {
         box.innerHTML = `<div>Live weather temporarily unavailable — click the National Weather Service button below for current Holland, NY conditions!</div>`;
+        hazardBox.textContent = "See the National Weather Service forecast below for 48-hour snow and wind details.";
       }
     }
     loadWeather();
