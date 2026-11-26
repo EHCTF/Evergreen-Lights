@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- EDIT WEBSITE TAB TITLE BELOW -->
-  <title>Evergreen Hills Christmas Light Show | Holland, NY</title>
+  <title>Evergreen Hills Christmas Light Display | Holland, NY</title>
   <style>
     :root {
       --bg-dark: #07131d;
@@ -90,7 +90,7 @@
     .subtitle {
       font-size: 1.1rem;
       color: var(--text-muted);
-      max-width: 650px;
+      max-width: 720px;
       margin: 0 auto 1.25rem;
     }
 
@@ -109,7 +109,7 @@
     .nav-tabs {
       display: flex;
       gap: 0.5rem;
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 0 auto;
       overflow-x: auto;
       justify-content: flex-start;
@@ -117,7 +117,7 @@
     }
     .nav-tabs::-webkit-scrollbar { display: none; }
 
-    @media (min-width: 760px) {
+    @media (min-width: 860px) {
       .nav-tabs { justify-content: center; }
     }
 
@@ -128,7 +128,7 @@
       padding: 0.55rem 1rem;
       border-radius: 999px;
       cursor: pointer;
-      font-size: 0.95rem;
+      font-size: 0.93rem;
       font-weight: 600;
       white-space: nowrap;
       transition: all 0.2s ease;
@@ -213,6 +213,12 @@
       border-bottom: none;
     }
 
+    .radio-highlight {
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+
     /* Buttons */
     .btn-primary {
       display: inline-block;
@@ -221,8 +227,8 @@
       background: var(--red);
       color: #ffffff;
       font-weight: 700;
-      font-size: 1.05rem;
-      padding: 0.9rem 1.4rem;
+      font-size: 1.02rem;
+      padding: 0.9rem 1.2rem;
       border-radius: 12px;
       text-decoration: none;
       border: none;
@@ -255,6 +261,7 @@
       text-decoration: none;
       font-size: 0.9rem;
       font-weight: 600;
+      transition: all 0.2s ease;
     }
 
     .btn-outline:hover {
@@ -268,7 +275,7 @@
       height: 320px;
       border: 0;
       border-radius: 12px;
-      margin-top: 0.75rem;
+      margin-top: 0.5rem;
     }
 
     /* Video Embeds */
@@ -373,6 +380,15 @@
       margin-bottom: 0.35rem;
     }
 
+    .status-report-box {
+      background: rgba(42, 157, 143, 0.16);
+      border: 1px solid rgba(42, 157, 143, 0.5);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.9rem;
+      font-size: 1.05rem;
+    }
+
     .weather-box {
       display: flex;
       flex-wrap: wrap;
@@ -391,12 +407,51 @@
       color: var(--gold);
     }
 
+    .as-seen-box {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+
     footer {
       text-align: center;
-      padding: 2rem 1rem;
+      padding: 2rem 1.25rem;
       border-top: 1px solid var(--border);
       color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    .footer-socials {
+      display: flex;
+      justify-content: center;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+      margin: 0.75rem 0 0.5rem;
+    }
+
+    .footer-socials a {
+      display: inline-block;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
       font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .footer-socials a:hover {
+      border-color: var(--gold);
+      color: var(--gold);
     }
   </style>
 </head>
@@ -411,11 +466,13 @@
     <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
   </div>
 
-  <!-- ================= HEADER SECTION (EDIT SHOW NAME HERE) ================= -->
+  <!-- ================= HEADER SECTION ================= -->
   <header>
     <div id="live-status" class="status-pill">🎄 Season Runs Nov 27 – Jan 1 • 5:00 PM – 9:00 PM</div>
     <h1>Evergreen Hills Christmas Light Display</h1>
-    <p class="subtitle">A family-run holiday light show in Holland, NY created by two brothers. Pull up, enjoy the lights, and celebrate the season!</p>
+    <p class="subtitle">
+      Welcome to our 3rd annual family-run synchronized holiday light show in Holland, NY, featuring over 30 minutes of music and thousands of lights! Pull up, enjoy the lights, and celebrate the season!
+    </p>
   </header>
 
   <!-- Navigation Bar -->
@@ -424,6 +481,7 @@
       <button class="tab-btn active" onclick="openTab('home', this)">📍 Show Info & Map</button>
       <button class="tab-btn" onclick="openTab('gallery', this)">🎥 Past Shows & Photos</button>
       <button class="tab-btn" onclick="openTab('updates', this)">📢 Recent Updates</button>
+      <button class="tab-btn" onclick="openTab('reviews', this)">⭐ Light Reviews</button>
       <button class="tab-btn" onclick="openTab('weather', this)">❄️ Weather</button>
       <button class="tab-btn" onclick="openTab('about', this)">👋 About Us</button>
       <button class="tab-btn" onclick="openTab('awards', this)">🏆 Awards</button>
@@ -441,14 +499,12 @@
             <li><strong>Dates:</strong> November 27 – January 1</li>
             <li><strong>Hours:</strong> Daily from 5:00 PM – 9:00 PM</li>
             <li><strong>Location:</strong> 7586 Vermont Hill Road, Holland, NY 14080</li>
-            <li><strong>Exact Viewing Pin:</strong> 42.675750, -78.537713</li>
-            <!-- OPTIONAL: If you use an FM radio transmitter, edit & uncomment the line below -->
-            <!-- <li><strong>Tune Your Radio To:</strong> 88.X FM</li> -->
+            <li><strong>Audio:</strong> <span class="radio-highlight">📻 Tune to 88.1 FM</span></li>
           </ul>
 
           <!-- Smart button automatically routes from visitor's current location to exact GPS pin -->
           <button class="btn-primary" onclick="getDirections()">
-            🚗 Get Directions From Current Location
+            🚗 Get Directions from Current Location (Google Maps &amp; Apple Maps Pin)
           </button>
 
           <div class="sub-map-links">
@@ -462,19 +518,29 @@
         </div>
 
         <div class="card">
-          <h2>📌 Exact Viewing Spot</h2>
-          <p style="color: var(--text-muted); font-size: 0.95rem;">
-            Our automatic pin drops you right at <strong>42.675750, -78.537713</strong> on Vermont Hill Road so your GPS takes you to the exact viewing spot.
-          </p>
+          <h2>📌 Viewing Spot</h2>
           <iframe
             class="map-frame"
             loading="lazy"
             allowfullscreen
-            referrerpolicy="no-referrer-when-downgrade"
+            referrerpolicy="no-referrer-when-cross-origin"
             src="https://maps.google.com/maps?q=42.675750,-78.537713&z=16&output=embed"
-            title="Map pin for 7586 Vermont Hill Road light display">
+            title="Viewing spot map for 7586 Vermont Hill Road light display">
           </iframe>
         </div>
+      </div>
+
+      <!-- Viewing Etiquette & Santa Front Display -->
+      <div class="card">
+        <h2>🎅 Viewing Tips &amp; Wave to Santa!</h2>
+        <ul class="highlight-list">
+          <li>
+            <strong>🚗 Driveway Viewing &amp; Headlights:</strong> Feel free to pull off the road into our driveway to enjoy the show, and please be courteous to others and our neighbors by dimming your headlights when viewing.
+          </li>
+          <li>
+            <strong>👋 Wave to Santa Up Front:</strong> Be sure to check out the steady display of lights at the front of the property where you can wave to Santa!
+          </li>
+        </ul>
       </div>
     </section>
 
@@ -484,7 +550,7 @@
         <button class="year-btn active" onclick="filterYear('all', this)">All Years</button>
         <button class="year-btn" onclick="filterYear('2025', this)">2025 Show</button>
         <button class="year-btn" onclick="filterYear('2024', this)">2024 Inaugural Show</button>
-        <button class="year-btn" onclick="filterYear('photos', this)">Photo & Video Archive</button>
+        <button class="year-btn" onclick="filterYear('photos', this)">Photo &amp; Video Archive</button>
       </div>
 
       <!-- 2025 SHOW CARD -->
@@ -533,9 +599,9 @@
         </p>
       </div>
 
-      <!-- PHOTO & EXTRA VIDEO ARCHIVE (ADD NEW PICS/VIDEOS HERE!) -->
+      <!-- PHOTO & EXTRA VIDEO ARCHIVE -->
       <div class="card year-block" data-year="photos">
-        <h2>📸 Extra Pictures & Videos Archive</h2>
+        <h2>📸 Extra Pictures &amp; Videos Archive</h2>
         <p style="color: var(--text-muted);">
           We are actively digging through our camera rolls and adding favorite behind-the-scenes clips and snowy night photos here!
         </p>
@@ -543,7 +609,7 @@
         <div class="photo-grid">
           <div class="photo-item">
             <div class="photo-caption" style="padding: 2rem 1rem; text-align: center;">
-              ✨ More photos & behind-the-scenes clips coming soon as we upload from our archive!
+              ✨ More photos &amp; behind-the-scenes clips coming soon as we upload from our archive!
             </div>
           </div>
         </div>
@@ -552,29 +618,84 @@
 
     <!-- ================= TAB 3: RECENT UPDATES ================= -->
     <section id="updates" class="tab-section">
+      <!--
+        HOW TO POST A NEW UPDATE:
+        Copy everything from <div class="card"> to </div> below, paste it right above this one, and edit the date & message!
+      -->
       <div class="card">
-        <span class="date-badge">November 2026</span>
+        <span class="date-badge">November 25th, 2026</span>
         <h3>🎅 Getting Ready for Opening Night (Nov 27)!</h3>
-        <p>We are putting the finishing touches on this year's display at 7586 Vermont Hill Road. Lights kick off November 27th and run every night from 5:00 PM to 9:00 PM through January 1st!</p>
-      </div>
-
-      <div class="card">
-        <span class="date-badge">Visitor Shoutouts & Responses</span>
-        <h3>💬 Did You Visit the Show?</h3>
-        <p style="color: var(--text-muted);">We love hearing your favorite songs and seeing pictures from your visit! Check back here as we share visitor photos and updates throughout the season.</p>
+        <p>We are putting the finishing touches on this year's display at 7586 Vermont Hill Road. Lights kick off November 27th and run every night from 5:00 PM to 9:00 PM through January 1st! Tune your radio to 88.1 FM when you pull in.</p>
       </div>
     </section>
 
-    <!-- ================= TAB 4: WEATHER ================= -->
+    <!-- ================= TAB 4: LIGHT REVIEWS (VISITOR COMMENTS & PHOTOS) ================= -->
+    <section id="reviews" class="tab-section">
+      <div class="card">
+        <h2>⭐ Light Reviews &amp; Visitor Photos</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1rem;">
+          Did you stop by to watch the lights? Tell us your favorite song, leave a review, or share pictures from your visit!
+        </p>
+
+        <div class="grid-2" style="margin-top: 1rem; margin-bottom: 0.5rem;">
+          <div style="background: var(--bg-card-alt); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border);">
+            <h3>📸 Share Photos &amp; Leave a Review</h3>
+            <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.85rem;">
+              Want to upload photos or videos from your car? Click below to drop a quick review and attach your favorite snapshots!
+            </p>
+            <!-- OPTIONAL: When you create a free Google Form or Padlet board for photo uploads, paste its link inside href="" below! -->
+            <a class="btn-primary" href="https://www.facebook.com/evergreenhillsxmastrees/" target="_blank" rel="noopener">
+              📷 Share Photos / Message Us on Facebook
+            </a>
+          </div>
+
+          <div style="background: var(--bg-card-alt); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border);">
+            <h3>💬 Comment Below via GitHub</h3>
+            <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.85rem;">
+              You can also post public comments, song requests, and pasted images directly in our community thread!
+            </p>
+            <!-- OPTIONAL: Update the link below to your repo's Discussions or Issues link if you enable GitHub Discussions -->
+            <a class="btn-outline" style="display: block; margin-top: 0.75rem;" href="https://www.instagram.com/evergreenhillschristmastrees/" target="_blank" rel="noopener">
+              ✨ Tag Us on Instagram
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Visitor Reviews / Photos (Easy to paste favorites here as they come in!) -->
+      <div class="card">
+        <span class="date-badge">Community Highlights</span>
+        <h3>🎄 Visitor Snapshots &amp; Favorite Songs</h3>
+        <p style="color: var(--text-muted);">
+          Check back as we feature visitor reviews and snowy driveway photos from the 2026 season right here!
+        </p>
+
+        <!-- OPTIONAL AUTOMATIC COMMENT BOX (Padlet / Giscus / Cusdis embed goes right here if you enable one!) -->
+        <div id="visitor-comment-embed" style="margin-top: 1rem;"></div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: WEATHER ================= -->
     <section id="weather" class="tab-section">
       <div class="card">
-        <h2>🌨️ Show Weather Status</h2>
-        <p><strong>Current Show Status:</strong> Scheduled to run normal hours (5:00 PM – 9:00 PM daily, Nov 27 – Jan 1). If extreme Western NY winds or blizzards ever affect the lights, we will post a notice right here and under Recent Updates!</p>
+        <h2>🌨️ Current Show Status</h2>
+        <div class="status-report-box">
+          <!--
+            DAILY AUTO-DATE STATUS:
+            The date before the ":" updates automatically every day!
+            If a storm ever pauses the show or blocks the driveway, just edit the text inside <span id="status-message"> below!
+          -->
+          <strong><span id="current-date-label">Today</span>:</strong>
+          <span id="status-message">Driveway is cleared and operations are normal.</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          Scheduled to run normal hours (5:00 PM – 9:00 PM daily, Nov 27 – Jan 1). If extreme Western NY winds or blizzards ever affect the lights or driveway conditions, we will update the status line above and post under Recent Updates!
+        </p>
       </div>
 
       <div class="card">
-        <h2>🌡️ Live Weather at 7586 Vermont Hill Rd, Holland, NY</h2>
-        <p style="color: var(--text-muted);">Live conditions pulled automatically for our exact coordinates (42.675750, -78.537713):</p>
+        <h2>🌡️ Live Weather in Holland, NY</h2>
+        <p style="color: var(--text-muted);">Current local conditions at Vermont Hill Road:</p>
 
         <div id="weather-widget" class="weather-box">
           <div>Loading live Holland, NY weather...</div>
@@ -588,34 +709,52 @@
       </div>
     </section>
 
-    <!-- ================= TAB 5: ABOUT US ================= -->
+    <!-- ================= TAB 6: ABOUT US ================= -->
     <section id="about" class="tab-section">
       <div class="card">
-        <h2>👋 About Us</h2>
+        <h2>👋 About Our Family Display</h2>
         <p style="margin-bottom: 1rem;">
-          Welcome! My brother and I officially started synchronizing and building our Christmas light display in <strong>2024</strong> right here at 7586 Vermont Hill Road in Holland, NY.
+          Decorating for Christmas has been a tradition for our family in Holland, NY for over two decades! We have put up a big steady holiday light display in front of our house since <strong>2005</strong>.
         </p>
         <p style="margin-bottom: 1rem;">
-          What started as a fun holiday project between brothers has grown each season with new lights, music, and memories. Every strand, prop, and sequence is set up by hand to bring some extra Christmas cheer to our community.
+          In <strong>2017</strong>, the display was greatly expanded by the two oldest children in the family, growing larger and brighter each winter until we officially launched our first full music-synchronized light show in <strong>2024</strong>.
         </p>
         <p style="color: var(--text-muted);">
-          Thank you for stopping by, sharing the show with friends and family, and making our holiday tradition so special!
+          Now in our third synchronized season, the show features thousands of lights dancing to over 30 minutes of holiday music alongside our classic steady display up front where visitors can still wave to Santa. Thank you for making our family's holiday tradition part of yours!
         </p>
+
+        <div class="as-seen-box">
+          <div>
+            <span class="date-badge" style="margin-bottom: 0.15rem;">Featured Display</span>
+            <div><strong>🎄 As seen on Christmas Light Finder</strong></div>
+          </div>
+          <a class="btn-outline" style="flex: 0 1 auto;" href="https://www.christmaslightfinder.com/displays/display-details/?id=5429" target="_blank" rel="noopener">
+            View Our Official Listing →
+          </a>
+        </div>
       </div>
     </section>
 
-    <!-- ================= TAB 6: AWARDS ================= -->
+    <!-- ================= TAB 7: AWARDS ================= -->
     <section id="awards" class="tab-section">
       <div class="card">
-        <h2>🏆 Awards & Recognition</h2>
+        <h2>🏆 Awards &amp; Recognition</h2>
         <p style="color: var(--text-muted); margin-bottom: 1rem;">
-          Community recognition, local decorating contests, and milestones from our shows since 2024:
+          Local decorating contest awards and community recognition in Holland, NY:
         </p>
 
         <ul class="highlight-list">
           <li>
-            <strong>🌟 2024 — Official Inaugural Light Show Season</strong><br />
-            <span style="color: var(--text-muted);">Launched our first full synchronized holiday display on Vermont Hill Road.</span>
+            <strong>🏆 2025 — Most Outlandish Home (Home &amp; Business Decorating Contest)</strong><br />
+            <span style="color: var(--text-muted);">Sponsored by the Kiwanis Club of Holland</span>
+          </li>
+          <li>
+            <strong>🏆 2024 — Best Overall Home (Home &amp; Business Decorating Contest)</strong><br />
+            <span style="color: var(--text-muted);">Sponsored by the Kiwanis Club of Holland</span>
+          </li>
+          <li>
+            <strong>🏆 2023 — Best Overall Home (Home &amp; Business Decorating Contest)</strong><br />
+            <span style="color: var(--text-muted);">Sponsored by the Kiwanis Club of Holland</span>
           </li>
         </ul>
       </div>
@@ -624,10 +763,22 @@
   </main>
 
   <footer>
-    <p>🎄 7586 Vermont Hill Road, Holland, NY 14080 • Daily 5:00 PM – 9:00 PM (Nov 27 – Jan 1)</p>
+    <p>🎄 Secondary Show Updates &amp; General Family Farm Info:</p>
+    <div class="footer-socials">
+      <a href="https://www.facebook.com/evergreenhillsxmastrees/" target="_blank" rel="noopener">
+        📘 Facebook (@evergreenhillsxmastrees)
+      </a>
+      <a href="https://www.instagram.com/evergreenhillschristmastrees/" target="_blank" rel="noopener">
+        📸 Instagram (@evergreenhillschristmastrees)
+      </a>
+    </div>
+    <p style="font-size: 0.82rem; margin-top: 0.6rem; opacity: 0.8;">
+      Show Runs Daily 5:00 PM – 9:00 PM (Nov 27 – Jan 1) • Tune to 88.1 FM *(Light display is separate from Christmas tree farm operations)*
+    </p>
   </footer>
 
   <script>
+    // 1. Switch Top Navigation Tabs
     function openTab(tabId, clickedBtn) {
       document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -635,6 +786,7 @@
       clickedBtn.classList.add('active');
     }
 
+    // 2. Filter Years in Past Shows Tab
     function filterYear(year, clickedBtn) {
       document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
       clickedBtn.classList.add('active');
@@ -647,6 +799,7 @@
       });
     }
 
+    // 3. Smart GPS Directions (Apple Maps on iPhone/Mac, Google Maps everywhere else)
     function getDirections() {
       const coords = "42.675750,-78.537713";
       const isAppleDevice = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) && !window.MSStream;
@@ -657,6 +810,20 @@
       }
     }
 
+    // 4. Populate Today's Date Automatically in Weather -> Current Show Status
+    function updateCurrentDateLabel() {
+      const dateEl = document.getElementById('current-date-label');
+      const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+      const formatted = nowNY.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      });
+      dateEl.textContent = formatted;
+    }
+    updateCurrentDateLabel();
+
+    // 5. Live Show Status Pill (Checks Eastern Time automatically)
     function updateShowStatus() {
       const pill = document.getElementById('live-status');
       const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
@@ -666,18 +833,19 @@
 
       const inSeason = (month === 11 && day >= 27) || (month === 12) || (month === 1 && day === 1);
       if (inSeason && hour >= 17 && hour < 21) {
-        pill.textContent = "🟢 LIGHTS ARE ON NOW! Running until 9:00 PM ET";
+        pill.textContent = "🟢 LIGHTS ARE ON NOW! Tune to 88.1 FM (Until 9:00 PM)";
         pill.style.background = "rgba(42, 157, 143, 0.25)";
         pill.style.color = "#6fffe9";
         pill.style.borderColor = "#2a9d8f";
       } else if (inSeason) {
-        pill.textContent = "🎄 In Season! Lights Turn On Daily 5:00 PM – 9:00 PM ET";
+        pill.textContent = "🎄 In Season! Lights Run Daily 5:00 PM – 9:00 PM • Tune to 88.1 FM";
       } else {
         pill.textContent = "🎄 Season Runs Daily Nov 27 – Jan 1 • 5:00 PM – 9:00 PM";
       }
     }
     updateShowStatus();
 
+    // 6. Live Weather Fetch for 42.675750, -78.537713 (Holland, NY) via Open-Meteo (NOAA/NWS models)
     async function loadWeather() {
       const box = document.getElementById('weather-widget');
       try {
