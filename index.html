@@ -109,7 +109,7 @@
     .nav-tabs {
       display: flex;
       gap: 0.5rem;
-      max-width: 1100px;
+      max-width: 1000px;
       margin: 0 auto;
       overflow-x: auto;
       justify-content: flex-start;
@@ -117,7 +117,7 @@
     }
     .nav-tabs::-webkit-scrollbar { display: none; }
 
-    @media (min-width: 860px) {
+    @media (min-width: 760px) {
       .nav-tabs { justify-content: center; }
     }
 
@@ -128,7 +128,7 @@
       padding: 0.55rem 1rem;
       border-radius: 999px;
       cursor: pointer;
-      font-size: 0.93rem;
+      font-size: 0.95rem;
       font-weight: 600;
       white-space: nowrap;
       transition: all 0.2s ease;
@@ -478,10 +478,9 @@
   <!-- Navigation Bar -->
   <nav>
     <div class="nav-tabs">
-      <button class="tab-btn active" onclick="openTab('home', this)">📍 Show Info & Map</button>
-      <button class="tab-btn" onclick="openTab('gallery', this)">🎥 Past Shows & Photos</button>
+      <button class="tab-btn active" onclick="openTab('home', this)">📍 Show Info &amp; Map</button>
+      <button class="tab-btn" onclick="openTab('gallery', this)">🎥 Past Shows &amp; Photos</button>
       <button class="tab-btn" onclick="openTab('updates', this)">📢 Recent Updates</button>
-      <button class="tab-btn" onclick="openTab('reviews', this)">⭐ Light Reviews</button>
       <button class="tab-btn" onclick="openTab('weather', this)">❄️ Weather</button>
       <button class="tab-btn" onclick="openTab('about', this)">👋 About Us</button>
       <button class="tab-btn" onclick="openTab('awards', this)">🏆 Awards</button>
@@ -523,7 +522,7 @@
             class="map-frame"
             loading="lazy"
             allowfullscreen
-            referrerpolicy="no-referrer-when-cross-origin"
+            referrerpolicy="no-referrer-when-downgrade"
             src="https://maps.google.com/maps?q=42.675750,-78.537713&z=16&output=embed"
             title="Viewing spot map for 7586 Vermont Hill Road light display">
           </iframe>
@@ -538,7 +537,7 @@
             <strong>🚗 Driveway Viewing &amp; Headlights:</strong> Feel free to pull off the road into our driveway to enjoy the show, and please be courteous to others and our neighbors by dimming your headlights when viewing.
           </li>
           <li>
-            <strong>👋 Wave to Santa Up Front:</strong> Be sure to check out the steady display of lights at the front of the property where you can wave to Santa!
+            <strong>👋 Wave to Santa Up Front:</strong> Be sure to check out the small steady display of lights at the front of the property where you can wave to Santa!
           </li>
         </ul>
       </div>
@@ -629,53 +628,7 @@
       </div>
     </section>
 
-    <!-- ================= TAB 4: LIGHT REVIEWS (VISITOR COMMENTS & PHOTOS) ================= -->
-    <section id="reviews" class="tab-section">
-      <div class="card">
-        <h2>⭐ Light Reviews &amp; Visitor Photos</h2>
-        <p style="color: var(--text-muted); margin-bottom: 1rem;">
-          Did you stop by to watch the lights? Tell us your favorite song, leave a review, or share pictures from your visit!
-        </p>
-
-        <div class="grid-2" style="margin-top: 1rem; margin-bottom: 0.5rem;">
-          <div style="background: var(--bg-card-alt); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border);">
-            <h3>📸 Share Photos &amp; Leave a Review</h3>
-            <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.85rem;">
-              Want to upload photos or videos from your car? Click below to drop a quick review and attach your favorite snapshots!
-            </p>
-            <!-- OPTIONAL: When you create a free Google Form or Padlet board for photo uploads, paste its link inside href="" below! -->
-            <a class="btn-primary" href="https://www.facebook.com/evergreenhillsxmastrees/" target="_blank" rel="noopener">
-              📷 Share Photos / Message Us on Facebook
-            </a>
-          </div>
-
-          <div style="background: var(--bg-card-alt); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border);">
-            <h3>💬 Comment Below via GitHub</h3>
-            <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.85rem;">
-              You can also post public comments, song requests, and pasted images directly in our community thread!
-            </p>
-            <!-- OPTIONAL: Update the link below to your repo's Discussions or Issues link if you enable GitHub Discussions -->
-            <a class="btn-outline" style="display: block; margin-top: 0.75rem;" href="https://www.instagram.com/evergreenhillschristmastrees/" target="_blank" rel="noopener">
-              ✨ Tag Us on Instagram
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Featured Visitor Reviews / Photos (Easy to paste favorites here as they come in!) -->
-      <div class="card">
-        <span class="date-badge">Community Highlights</span>
-        <h3>🎄 Visitor Snapshots &amp; Favorite Songs</h3>
-        <p style="color: var(--text-muted);">
-          Check back as we feature visitor reviews and snowy driveway photos from the 2026 season right here!
-        </p>
-
-        <!-- OPTIONAL AUTOMATIC COMMENT BOX (Padlet / Giscus / Cusdis embed goes right here if you enable one!) -->
-        <div id="visitor-comment-embed" style="margin-top: 1rem;"></div>
-      </div>
-    </section>
-
-    <!-- ================= TAB 5: WEATHER ================= -->
+    <!-- ================= TAB 4: WEATHER ================= -->
     <section id="weather" class="tab-section">
       <div class="card">
         <h2>🌨️ Current Show Status</h2>
@@ -686,7 +639,7 @@
             If a storm ever pauses the show or blocks the driveway, just edit the text inside <span id="status-message"> below!
           -->
           <strong><span id="current-date-label">Today</span>:</strong>
-          <span id="status-message">Driveway is cleared and operations are normal.</span>
+          <span id="status-message">Driveway is cleared and operations are normal</span>
         </div>
         <p style="color: var(--text-muted); font-size: 0.95rem;">
           Scheduled to run normal hours (5:00 PM – 9:00 PM daily, Nov 27 – Jan 1). If extreme Western NY winds or blizzards ever affect the lights or driveway conditions, we will update the status line above and post under Recent Updates!
@@ -709,18 +662,18 @@
       </div>
     </section>
 
-    <!-- ================= TAB 6: ABOUT US ================= -->
+    <!-- ================= TAB 5: ABOUT US ================= -->
     <section id="about" class="tab-section">
       <div class="card">
         <h2>👋 About Our Family Display</h2>
         <p style="margin-bottom: 1rem;">
-          Decorating for Christmas has been a tradition for our family in Holland, NY for over two decades! We have put up a big steady holiday light display in front of our house since <strong>2005</strong>.
+          Decorating for Christmas has been a tradition for our family in Holland, NY for over two decades! We have had a big steady holiday light display in front of our house since <strong>2005</strong>.
         </p>
         <p style="margin-bottom: 1rem;">
-          In <strong>2017</strong>, the display was greatly expanded by the two oldest children in the family, growing larger and brighter each winter until we officially launched our first full music-synchronized light show in <strong>2024</strong>.
+          In <strong>2017</strong>, the display was greatly expanded by the two oldest children in the family, growing larger and brighter each winter until we officially produced our first full music-synchronized light show in <strong>2024</strong>.
         </p>
         <p style="color: var(--text-muted);">
-          Now in our third synchronized season, the show features thousands of lights dancing to over 30 minutes of holiday music alongside our classic steady display up front where visitors can still wave to Santa. Thank you for making our family's holiday tradition part of yours!
+          Now in our third synchronized season, the show features thousands of lights dancing to over 30 minutes of holiday music alongside our steady display up front where visitors can still wave to Santa. Thank you for making our family's holiday tradition part of yours!
         </p>
 
         <div class="as-seen-box">
@@ -735,7 +688,7 @@
       </div>
     </section>
 
-    <!-- ================= TAB 7: AWARDS ================= -->
+    <!-- ================= TAB 6: AWARDS ================= -->
     <section id="awards" class="tab-section">
       <div class="card">
         <h2>🏆 Awards &amp; Recognition</h2>
