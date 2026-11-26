@@ -1,1 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- EDIT WEBSITE TAB TITLE BELOW -->
+  <title>Evergreen Hills Christmas Light Show | Holland, NY</title>
+  <style>
+    :root {
+      --bg-dark: #07131d;
+      --bg-card: #102332;
+      --bg-card-alt: #152d40;
+      --red: #d62828;
+      --red-hover: #b81d1d;
+      --green: #2a9d8f;
+      --gold: #f4c430;
+      --text-light: #f8f9fa;
+      --text-muted: #b8c7d4;
+      --border: rgba(255, 255, 255, 0.12);
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top, #132e42 0%, var(--bg-dark) 65%);
+      color: var(--text-light);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Festive String Lights Top Border */
+    .light-strand {
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 12px;
+      background: #040b11;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bulb {
+      width: 12px;
+      height: 18px;
+      border-radius: 50%;
+      animation: twinkle 1.8s infinite alternate;
+    }
+    .bulb:nth-child(4n+1) { background: #ff4d4d; box-shadow: 0 0 10px #ff4d4d; animation-delay: 0s; }
+    .bulb:nth-child(4n+2) { background: #4dff88; box-shadow: 0 0 10px #4dff88; animation-delay: 0.4s; }
+    .bulb:nth-child(4n+3) { background: #ffd24d; box-shadow: 0 0 10px #ffd24d; animation-delay: 0.8s; }
+    .bulb:nth-child(4n+4) { background: #4db8ff; box-shadow: 0 0 10px #4db8ff; animation-delay: 1.2s; }
+
+    @keyframes twinkle {
+      0% { opacity: 0.45; transform: scale(0.92); }
+      100% { opacity: 1; transform: scale(1.08); }
+    }
+
+    /* Hero Header */
+    header {
+      text-align: center;
+      padding: 2.5rem 1.25rem 1.75rem;
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: rgba(244, 196, 48, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(244, 196, 48, 0.4);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.1rem);
+      line-height: 1.15;
+      margin-bottom: 0.6rem;
+      color: #ffffff;
+      text-shadow: 0 2px 15px rgba(244, 196, 48, 0.25);
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto 1.25rem;
+    }
+
+    /* Navigation Tabs */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 19, 29, 0.92);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 0.75rem;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      overflow-x: auto;
+      justify-content: flex-start;
+      scrollbar-width: none;
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+
+    @media (min-width: 760px) {
+      .nav-tabs { justify-content: center; }
+    }
+
+    .tab-btn {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .tab-btn.active {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red);
+      box-shadow: 0 4px 12px rgba(214, 40, 40, 0.4);
+    }
+
+    /* Main Content Container */
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .tab-section {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .card h2 {
+      color: var(--gold);
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card h3 {
+      color: #fff;
+      font-size: 1.15rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .highlight-list {
+      list-style: none;
+      margin-top: 0.75rem;
+    }
+
+    .highlight-list li {
+      padding: 0.55rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .highlight-list li:last-child {
+      border-bottom: none;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      background: var(--red);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 0.9rem 1.4rem;
+      border-radius: 12px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+      margin-top: 0.75rem;
+    }
+
+    .btn-primary:hover {
+      background: var(--red-hover);
+      transform: translateY(-1px);
+    }
+
+    .sub-map-links {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-outline {
+      flex: 1;
+      min-width: 140px;
+      text-align: center;
+      padding: 0.55rem 0.9rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-card-alt);
+      color: var(--text-light);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* Map Embed */
+    .map-frame {
+      width: 100%;
+      height: 320px;
+      border: 0;
+      border-radius: 12px;
+      margin-top: 0.75rem;
+    }
+
+    /* Video Embeds */
+    .video-16x9 {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      margin: 1rem 0;
+    }
+
+    .video-16x9 iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Vertical 9:16 frame for YouTube Shorts */
+    .video-short-wrapper {
+      max-width: 340px;
+      margin: 1rem auto;
+      position: relative;
+      aspect-ratio: 9 / 16;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      border: 2px solid var(--border);
+    }
+
+    .video-short-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* Photo Gallery Grid */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .photo-item {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .photo-item img, .photo-item video {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-caption {
+      padding: 0.65rem 0.85rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Year Filter Buttons inside Past Shows */
+    .year-filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .year-btn {
+      background: var(--bg-card-alt);
+      color: var(--text-light);
+      border: 1px solid var(--border);
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .year-btn.active {
+      background: var(--gold);
+      color: #07131d;
+      border-color: var(--gold);
+    }
+
+    /* Update & Weather Badges */
+    .date-badge {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.35rem;
+    }
+
+    .weather-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card-alt);
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-top: 0.75rem;
+    }
+
+    .temp-big {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Twinkling Christmas Lights Top Bar -->
+  <div class="light-strand" aria-hidden="true">
+    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+    <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
+  </div>
+
+  <!-- ================= HEADER SECTION (EDIT SHOW NAME HERE) ================= -->
+  <header>
+    <div id="live-status" class="status-pill">🎄 Season Runs Nov 27 – Jan 1 • 5:00 PM – 9:00 PM</div>
+    <h1>Evergreen Hills Christmas Light Display</h1>
+    <p class="subtitle">A family-run holiday light show in Holland, NY created by two brothers. Pull up, enjoy the lights, and celebrate the season!</p>
+  </header>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="openTab('home', this)">📍 Show Info & Map</button>
+      <button class="tab-btn" onclick="openTab('gallery', this)">🎥 Past Shows & Photos</button>
+      <button class="tab-btn" onclick="openTab('updates', this)">📢 Recent Updates</button>
+      <button class="tab-btn" onclick="openTab('weather', this)">❄️ Weather</button>
+      <button class="tab-btn" onclick="openTab('about', this)">👋 About Us</button>
+      <button class="tab-btn" onclick="openTab('awards', this)">🏆 Awards</button>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ================= TAB 1: SHOW INFO & DIRECTIONS ================= -->
+    <section id="home" class="tab-section active">
+      <div class="grid-2">
+        <div class="card">
+          <h2>🕒 Show Schedule</h2>
+          <ul class="highlight-list">
+            <li><strong>Dates:</strong> November 27 – January 1</li>
+            <li><strong>Hours:</strong> Daily from 5:00 PM – 9:00 PM</li>
+            <li><strong>Location:</strong> 7586 Vermont Hill Road, Holland, NY 14080</li>
+            <li><strong>Exact Viewing Pin:</strong> 42.675750, -78.537713</li>
+            <!-- OPTIONAL: If you use an FM radio transmitter, edit & uncomment the line below -->
+            <!-- <li><strong>Tune Your Radio To:</strong> 88.X FM</li> -->
+          </ul>
+
+          <!-- Smart button automatically routes from visitor's current location to exact GPS pin -->
+          <button class="btn-primary" onclick="getDirections()">
+            🚗 Get Directions From Current Location
+          </button>
+
+          <div class="sub-map-links">
+            <a class="btn-outline" href="https://www.google.com/maps/dir/?api=1&destination=42.675750,-78.537713&travelmode=driving" target="_blank" rel="noopener">
+              Google Maps Pin
+            </a>
+            <a class="btn-outline" href="https://maps.apple.com/?daddr=42.675750,-78.537713&dirflg=d" target="_blank" rel="noopener">
+              Apple Maps Pin
+            </a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>📌 Exact Viewing Spot</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">
+            Our automatic pin drops you right at <strong>42.675750, -78.537713</strong> on Vermont Hill Road so your GPS takes you to the exact viewing spot.
+          </p>
+          <iframe
+            class="map-frame"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://maps.google.com/maps?q=42.675750,-78.537713&z=16&output=embed"
+            title="Map pin for 7586 Vermont Hill Road light display">
+          </iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 2: PAST SHOWS, VIDEOS & PHOTOS ================= -->
+    <section id="gallery" class="tab-section">
+      <div class="year-filters">
+        <button class="year-btn active" onclick="filterYear('all', this)">All Years</button>
+        <button class="year-btn" onclick="filterYear('2025', this)">2025 Show</button>
+        <button class="year-btn" onclick="filterYear('2024', this)">2024 Inaugural Show</button>
+        <button class="year-btn" onclick="filterYear('photos', this)">Photo & Video Archive</button>
+      </div>
+
+      <!-- 2025 SHOW CARD -->
+      <div class="card year-block" data-year="2025">
+        <span class="date-badge">2025 Season</span>
+        <h2>🚁 2025 Light Show Aerial Drone Short</h2>
+        <p style="color: var(--text-muted);">Check out a bird's-eye drone view of our 2025 holiday light display!</p>
+
+        <div class="video-short-wrapper">
+          <iframe
+            src="https://www.youtube.com/embed/2fNAevmS1yo"
+            title="2025 Christmas Light Show YouTube Short"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <p style="text-align: center;">
+          <a class="btn-outline" style="display:inline-block;" href="https://www.youtube.com/shorts/2fNAevmS1yo" target="_blank" rel="noopener">
+            ▶ Watch Directly on YouTube
+          </a>
+        </p>
+      </div>
+
+      <!-- 2024 SHOW CARD -->
+      <div class="card year-block" data-year="2024">
+        <span class="date-badge">2024 Season • Where It Officially Started</span>
+        <h2>🎄 2024 Full Light Show</h2>
+        <p style="color: var(--text-muted);">Our very first official light show season in 2024! Press play below to watch the full synchronized show.</p>
+
+        <div class="video-16x9">
+          <iframe
+            src="https://www.youtube.com/embed/WPeKCprLpvk"
+            title="2024 Christmas Light Show Video"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <p style="text-align: center;">
+          <a class="btn-outline" style="display:inline-block;" href="https://www.youtube.com/watch?v=WPeKCprLpvk&list=RDWPeKCprLpvk&start_radio=1" target="_blank" rel="noopener">
+            ▶ Watch Directly on YouTube
+          </a>
+        </p>
+      </div>
+
+      <!-- PHOTO & EXTRA VIDEO ARCHIVE (ADD NEW PICS/VIDEOS HERE!) -->
+      <div class="card year-block" data-year="photos">
+        <h2>📸 Extra Pictures & Videos Archive</h2>
+        <p style="color: var(--text-muted);">
+          We are actively digging through our camera rolls and adding favorite behind-the-scenes clips and snowy night photos here!
+        </p>
+
+        <div class="photo-grid">
+          <div class="photo-item">
+            <div class="photo-caption" style="padding: 2rem 1rem; text-align: center;">
+              ✨ More photos & behind-the-scenes clips coming soon as we upload from our archive!
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 3: RECENT UPDATES ================= -->
+    <section id="updates" class="tab-section">
+      <div class="card">
+        <span class="date-badge">November 2026</span>
+        <h3>🎅 Getting Ready for Opening Night (Nov 27)!</h3>
+        <p>We are putting the finishing touches on this year's display at 7586 Vermont Hill Road. Lights kick off November 27th and run every night from 5:00 PM to 9:00 PM through January 1st!</p>
+      </div>
+
+      <div class="card">
+        <span class="date-badge">Visitor Shoutouts & Responses</span>
+        <h3>💬 Did You Visit the Show?</h3>
+        <p style="color: var(--text-muted);">We love hearing your favorite songs and seeing pictures from your visit! Check back here as we share visitor photos and updates throughout the season.</p>
+      </div>
+    </section>
+
+    <!-- ================= TAB 4: WEATHER ================= -->
+    <section id="weather" class="tab-section">
+      <div class="card">
+        <h2>🌨️ Show Weather Status</h2>
+        <p><strong>Current Show Status:</strong> Scheduled to run normal hours (5:00 PM – 9:00 PM daily, Nov 27 – Jan 1). If extreme Western NY winds or blizzards ever affect the lights, we will post a notice right here and under Recent Updates!</p>
+      </div>
+
+      <div class="card">
+        <h2>🌡️ Live Weather at 7586 Vermont Hill Rd, Holland, NY</h2>
+        <p style="color: var(--text-muted);">Live conditions pulled automatically for our exact coordinates (42.675750, -78.537713):</p>
+
+        <div id="weather-widget" class="weather-box">
+          <div>Loading live Holland, NY weather...</div>
+        </div>
+
+        <div class="sub-map-links" style="margin-top: 1rem;">
+          <a class="btn-outline" href="https://forecast.weather.gov/MapClick.php?lat=42.6758&lon=-78.5377" target="_blank" rel="noopener">
+            View Full National Weather Service Forecast (Holland, NY)
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: ABOUT US ================= -->
+    <section id="about" class="tab-section">
+      <div class="card">
+        <h2>👋 About Us</h2>
+        <p style="margin-bottom: 1rem;">
+          Welcome! My brother and I officially started synchronizing and building our Christmas light display in <strong>2024</strong> right here at 7586 Vermont Hill Road in Holland, NY.
+        </p>
+        <p style="margin-bottom: 1rem;">
+          What started as a fun holiday project between brothers has grown each season with new lights, music, and memories. Every strand, prop, and sequence is set up by hand to bring some extra Christmas cheer to our community.
+        </p>
+        <p style="color: var(--text-muted);">
+          Thank you for stopping by, sharing the show with friends and family, and making our holiday tradition so special!
+        </p>
+      </div>
+    </section>
+
+    <!-- ================= TAB 6: AWARDS ================= -->
+    <section id="awards" class="tab-section">
+      <div class="card">
+        <h2>🏆 Awards & Recognition</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1rem;">
+          Community recognition, local decorating contests, and milestones from our shows since 2024:
+        </p>
+
+        <ul class="highlight-list">
+          <li>
+            <strong>🌟 2024 — Official Inaugural Light Show Season</strong><br />
+            <span style="color: var(--text-muted);">Launched our first full synchronized holiday display on Vermont Hill Road.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>🎄 7586 Vermont Hill Road, Holland, NY 14080 • Daily 5:00 PM – 9:00 PM (Nov 27 – Jan 1)</p>
+  </footer>
+
+  <script>
+    function openTab(tabId, clickedBtn) {
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      clickedBtn.classList.add('active');
+    }
+
+    function filterYear(year, clickedBtn) {
+      document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
+      clickedBtn.classList.add('active');
+      document.querySelectorAll('.year-block').forEach(block => {
+        if (year === 'all' || block.dataset.year === year) {
+          block.style.display = 'block';
+        } else {
+          block.style.display = 'none';
+        }
+      });
+    }
+
+    function getDirections() {
+      const coords = "42.675750,-78.537713";
+      const isAppleDevice = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) && !window.MSStream;
+      if (isAppleDevice) {
+        window.open(`https://maps.apple.com/?daddr=${coords}&dirflg=d`, "_blank");
+      } else {
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${coords}&travelmode=driving`, "_blank");
+      }
+    }
+
+    function updateShowStatus() {
+      const pill = document.getElementById('live-status');
+      const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+      const month = nowNY.getMonth() + 1;
+      const day = nowNY.getDate();
+      const hour = nowNY.getHours();
+
+      const inSeason = (month === 11 && day >= 27) || (month === 12) || (month === 1 && day === 1);
+      if (inSeason && hour >= 17 && hour < 21) {
+        pill.textContent = "🟢 LIGHTS ARE ON NOW! Running until 9:00 PM ET";
+        pill.style.background = "rgba(42, 157, 143, 0.25)";
+        pill.style.color = "#6fffe9";
+        pill.style.borderColor = "#2a9d8f";
+      } else if (inSeason) {
+        pill.textContent = "🎄 In Season! Lights Turn On Daily 5:00 PM – 9:00 PM ET";
+      } else {
+        pill.textContent = "🎄 Season Runs Daily Nov 27 – Jan 1 • 5:00 PM – 9:00 PM";
+      }
+    }
+    updateShowStatus();
+
+    async function loadWeather() {
+      const box = document.getElementById('weather-widget');
+      try {
+        const res = await fetch(
+          "https://api.open-meteo.com/v1/forecast?latitude=42.67575&longitude=-78.537713&current=temperature_2m,apparent_temperature,snowfall,wind_speed_10m,weather_code&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York"
+        );
+        const data = await res.json();
+        const cur = data.current;
+        const codes = {
+          0: "Clear Sky ✨", 1: "Mainly Clear 🌙", 2: "Partly Cloudy ⛅", 3: "Overcast ☁️",
+          45: "Foggy 🌫️", 51: "Light Drizzle 🌧️", 61: "Rain 🌧️", 71: "Light Snow ❄️",
+          73: "Moderate Snow ❄️", 75: "Heavy Snow ❄️", 77: "Snow Grains ❄️", 85: "Snow Showers 🌨️", 86: "Heavy Snow Showers 🌨️"
+        };
+        const desc = codes[cur.weather_code] || "Winter Conditions ❄️";
+        box.innerHTML = `
+          <div>
+            <div class="temp-big">${Math.round(cur.temperature_2m)}°F</div>
+            <div><strong>${desc}</strong></div>
+          </div>
+          <div>
+            <div><strong>Feels Like:</strong> ${Math.round(cur.apparent_temperature)}°F</div>
+            <div><strong>Wind:</strong> ${Math.round(cur.wind_speed_10m)} mph</div>
+            <div><strong>Current Snowfall:</strong> ${cur.snowfall}"</div>
+          </div>
+        `;
+      } catch (e) {
+        box.innerHTML = `<div>Live weather temporarily unavailable — click the National Weather Service button below for current Holland, NY conditions!</div>`;
+      }
+    }
+    loadWeather();
+  </script>
+</body>
+</html>
