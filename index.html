@@ -184,6 +184,25 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     }
 
+    /* Green & Red Styled Update Cards (Matches Weather Boxes) */
+    .card.update-green {
+      background: rgba(42, 157, 143, 0.16);
+      border-color: rgba(42, 157, 143, 0.55);
+    }
+
+    .card.update-green p {
+      color: #d8fff8;
+    }
+
+    .card.update-red {
+      background: rgba(214, 40, 40, 0.22);
+      border-color: rgba(244, 196, 48, 0.75);
+    }
+
+    .card.update-red p {
+      color: #fff3cd;
+    }
+
     .card h2 {
       color: var(--gold);
       font-size: 1.4rem;
@@ -530,10 +549,10 @@
 
           <div class="sub-map-links">
             <a class="btn-outline" href="https://www.google.com/maps/dir/?api=1&destination=42.675750,-78.537713&travelmode=driving" target="_blank" rel="noopener">
-              Google Maps Pin
+              Google Maps
             </a>
             <a class="btn-outline" href="https://maps.apple.com/?daddr=42.675750,-78.537713&dirflg=d" target="_blank" rel="noopener">
-              Apple Maps Pin
+              Apple Maps
             </a>
           </div>
         </div>
@@ -551,9 +570,9 @@
         </div>
       </div>
 
-      <!-- Viewing Etiquette & Santa Front Display -->
+      <!-- Viewing Tips -->
       <div class="card">
-        <h2>🎅 Viewing Tips &amp; Wave to Santa!</h2>
+        <h2>🎅 Viewing Tips</h2>
         <ul class="highlight-list">
           <li>
             <strong>🚗 Driveway Viewing &amp; Headlights:</strong> Feel free to pull off the road into our driveway to enjoy the show. Please be courteous to others and our neighbors by dimming your headlights when viewing.
@@ -641,12 +660,20 @@
     <section id="updates" class="tab-section">
       <!--
         HOW TO POST A NEW UPDATE:
-        Copy everything from <div class="card"> to </div> below, paste it right above this one, and edit the date & message!
+        - Use <div class="card update-green"> for positive / normal show updates (green box)
+        - Use <div class="card update-red"> for weather delays / advisories (red box)
+        Paste new updates at the top so visitors see the most recent post first!
       -->
-      <div class="card">
+      <div class="card update-red">
+        <span class="date-badge">November 27th, 2026</span>
+        <h3>⚠️ Icey Weather Impacts Operations</h3>
+        <p>Freezing rain on Thanksgiving slowed down final prep for opening night (11/27). While the show will be operational tonight, final light prep and synchronization will be completed over the weekend. We apologize for the slight weather delay!</p>
+      </div>
+
+      <div class="card update-green">
         <span class="date-badge">November 25th, 2026</span>
         <h3>🎅 Getting Ready for Opening Night (Nov 27)!</h3>
-        <p>We are putting the finishing touches on this year's display at 7586 Vermont Hill Road. Lights kick off November 27th and run every night from 5:00 PM to 9:00 PM through January 1st! Tune your radio to 88.1 FM when you pull in.</p>
+        <p>We are putting the finishing touches on this year's display!! Opening night is Friday, November 27th from 5:00 PM to 9:00 PM. Tune your FM radio to 88.1 for the full experience!</p>
       </div>
     </section>
 
@@ -664,7 +691,7 @@
           <span id="status-message">Driveway is cleared and operations are normal</span>
         </div>
         <p style="color: var(--text-muted); font-size: 0.95rem;">
-          Scheduled to run normal hours (5:00 PM – 9:00 PM). If poor weather conditions impact the light show or driveway clearing operations, updates will be provided here.
+          Scheduled to run normal hours (5:00 PM – 9:00 PM). If poor weather conditions impact the light show, updates will be provided under the "Recent Updates" tab.
         </p>
       </div>
 
@@ -676,9 +703,9 @@
           <div>Loading live Holland, NY weather...</div>
         </div>
 
-        <!-- 48-Hour Hazardous Weather Spot Forecast Check (6"+ snow or 45+ mph gusts) -->
+        <!-- 48-Hour Hazardous Weather Spot Forecast Check (6"+ snow, 45+ mph gusts, or 0.10"+ ice) -->
         <div id="hazard-alert" class="hazard-box">
-          Checking 48-hour spot forecast for snow &amp; wind...
+          Checking 48-hour spot forecast for snow, ice &amp; wind...
         </div>
 
         <div class="sub-map-links" style="margin-top: 1rem;">
@@ -825,20 +852,64 @@
     }
     updateShowStatus();
 
-    // 6. Live Weather + 48-Hour Spot Hazard Check (6"+ Snow or 45+ mph Wind Gusts)
+    // Helper: Fetch official NWS Gridpoint 48-hour Ice Accumulation (in inches) if available
+    async function fetchNws48HrIceInches() {
+      try {
+        const ptRes = await fetch("https://api.weather.gov/points/42.6758,-78.5377", {
+          headers: { "Accept": "application/geo+json" }
+        });
+        if (!ptRes.ok) return 0;
+        const ptData = await ptRes.json();
+        const gridUrl = ptData.properties && ptData.properties.forecastGridData;
+        if (!gridUrl) return 0;
+
+        const gridRes = await fetch(gridUrl, { headers: { "Accept": "application/geo+json" } });
+        if (!gridRes.ok) return 0;
+        const gridData = await gridRes.json();
+        const iceSeries = gridData.properties && gridData.properties.iceAccumulation;
+        if (!iceSeries || !Array.isArray(iceSeries.values)) return 0;
+
+        const nowMs = Date.now();
+        const cutoffMs = nowMs + 48 * 3600 * 1000;
+        let totalMm = 0;
+
+        for (const item of iceSeries.values) {
+          const parts = (item.validTime || "").split("/");
+          const startMs = Date.parse(parts[0]);
+          if (isNaN(startMs)) continue;
+          if (startMs < cutoffMs && startMs >= nowMs - 6 * 3600 * 1000) {
+            totalMm += (item.value || 0);
+          }
+        }
+        // NWS gridpoint iceAccumulation is reported in millimeters; convert mm -> inches
+        return totalMm / 25.4;
+      } catch (err) {
+        return 0;
+      }
+    }
+
+    // 6. Live Weather + 48-Hour Spot Hazard Check (6"+ Snow, 45+ mph Wind Gusts, or 0.10"+ Ice)
     async function loadWeather() {
       const box = document.getElementById('weather-widget');
       const hazardBox = document.getElementById('hazard-alert');
       try {
-        const res = await fetch(
-          "https://api.open-meteo.com/v1/forecast?latitude=42.67575&longitude=-78.537713&current=temperature_2m,apparent_temperature,snowfall,wind_speed_10m,weather_code&daily=snowfall_sum,wind_gusts_10m_max&hourly=snowfall,wind_gusts_10m&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York"
-        );
+        const [res, nwsIceInches] = await Promise.all([
+          fetch(
+            "https://api.open-meteo.com/v1/forecast?latitude=42.67575&longitude=-78.537713&current=temperature_2m,apparent_temperature,snowfall,wind_speed_10m,weather_code&daily=snowfall_sum,wind_gusts_10m_max&hourly=temperature_2m,precipitation,rain,snowfall,wind_gusts_10m,weather_code&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York"
+          ),
+          fetchNws48HrIceInches()
+        ]);
+
         const data = await res.json();
         const cur = data.current;
         const codes = {
           0: "Clear Sky ✨", 1: "Mainly Clear 🌙", 2: "Partly Cloudy ⛅", 3: "Overcast ☁️",
-          45: "Foggy 🌫️", 51: "Light Drizzle 🌧️", 61: "Rain 🌧️", 71: "Light Snow ❄️",
-          73: "Moderate Snow ❄️", 75: "Heavy Snow ❄️", 77: "Snow Grains ❄️", 85: "Snow Showers 🌨️", 86: "Heavy Snow Showers 🌨️"
+          45: "Foggy 🌫️", 48: "Rime Fog 🌫️", 51: "Light Drizzle 🌧️", 53: "Drizzle 🌧️", 55: "Dense Drizzle 🌧️",
+          56: "Freezing Drizzle 🧊", 57: "Heavy Freezing Drizzle 🧊",
+          61: "Light Rain 🌧️", 63: "Moderate Rain 🌧️", 65: "Heavy Rain 🌧️",
+          66: "Freezing Rain 🧊", 67: "Heavy Freezing Rain 🧊",
+          71: "Light Snow ❄️", 73: "Moderate Snow ❄️", 75: "Heavy Snow ❄️", 77: "Snow Grains ❄️",
+          85: "Snow Showers 🌨️", 86: "Heavy Snow Showers 🌨️"
         };
         const desc = codes[cur.weather_code] || "Winter Conditions ❄️";
         box.innerHTML = `
@@ -859,25 +930,56 @@
         const gustToday = (data.daily && data.daily.wind_gusts_10m_max) ? (data.daily.wind_gusts_10m_max[0] || 0) : 0;
         const gustTomorrow = (data.daily && data.daily.wind_gusts_10m_max) ? (data.daily.wind_gusts_10m_max[1] || 0) : 0;
 
-        // Also compute rolling 48-hour snowfall & max wind gust starting from the current Eastern hour
         let rolling48Snow = 0;
         let rolling48Gust = 0;
+        let rolling48FreezingRain = 0;
+        let todayFreezingRain = 0;
+        let tomorrowFreezingRain = 0;
+
         if (data.hourly && data.hourly.time) {
           const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
           const pad = n => String(n).padStart(2, '0');
-          const curHourPrefix = `${nowNY.getFullYear()}-${pad(nowNY.getMonth() + 1)}-${pad(nowNY.getDate())}T${pad(nowNY.getHours())}`;
+          const todayStr = `${nowNY.getFullYear()}-${pad(nowNY.getMonth() + 1)}-${pad(nowNY.getDate())}`;
+          const tmrwDate = new Date(nowNY);
+          tmrwDate.setDate(tmrwDate.getDate() + 1);
+          const tmrwStr = `${tmrwDate.getFullYear()}-${pad(tmrwDate.getMonth() + 1)}-${pad(tmrwDate.getDate())}`;
+          const curHourPrefix = `${todayStr}T${pad(nowNY.getHours())}`;
+
           let startIdx = data.hourly.time.findIndex(t => t.startsWith(curHourPrefix));
           if (startIdx < 0) startIdx = 0;
           const endIdx = Math.min(startIdx + 48, data.hourly.time.length);
-          for (let i = startIdx; i < endIdx; i++) {
-            rolling48Snow += (data.hourly.snowfall[i] || 0);
-            if ((data.hourly.wind_gusts_10m[i] || 0) > rolling48Gust) {
-              rolling48Gust = data.hourly.wind_gusts_10m[i];
+
+          // Check hourly freezing precipitation (WMO freezing drizzle/rain codes 56, 57, 66, 67 OR liquid rain at <= 32F)
+          for (let i = 0; i < data.hourly.time.length; i++) {
+            const tStr = data.hourly.time[i];
+            const wCode = data.hourly.weather_code ? data.hourly.weather_code[i] : 0;
+            const tempF = data.hourly.temperature_2m ? data.hourly.temperature_2m[i] : 40;
+            const precip = data.hourly.precipitation ? (data.hourly.precipitation[i] || 0) : 0;
+            const rainAmt = data.hourly.rain ? (data.hourly.rain[i] || 0) : 0;
+
+            const isFreezingCode = (wCode === 56 || wCode === 57 || wCode === 66 || wCode === 67);
+            const isSubfreezingRain = (tempF <= 32 && rainAmt > 0);
+            const hrIce = isFreezingCode ? precip : (isSubfreezingRain ? rainAmt : 0);
+
+            if (tStr.startsWith(todayStr)) todayFreezingRain += hrIce;
+            if (tStr.startsWith(tmrwStr)) tomorrowFreezingRain += hrIce;
+
+            if (i >= startIdx && i < endIdx) {
+              rolling48Snow += (data.hourly.snowfall[i] || 0);
+              if ((data.hourly.wind_gusts_10m[i] || 0) > rolling48Gust) {
+                rolling48Gust = data.hourly.wind_gusts_10m[i];
+              }
+              rolling48FreezingRain += hrIce;
             }
           }
         }
 
+        const peakIce = Math.max(nwsIceInches, todayFreezingRain, tomorrowFreezingRain, rolling48FreezingRain);
+
         const warnings = [];
+        if (peakIce >= 0.10) {
+          warnings.push(`Ice accumulation forecast (up to ${peakIce.toFixed(2)}" expected within the next 48 hours)`);
+        }
         if (snowToday >= 6 || snowTomorrow >= 6 || rolling48Snow >= 6) {
           const peakSnow = Math.max(snowToday, snowTomorrow, rolling48Snow).toFixed(1);
           warnings.push(`Heavy snowfall forecast (up to ${peakSnow}" expected within the next 48 hours)`);
@@ -889,14 +991,14 @@
 
         if (warnings.length > 0) {
           hazardBox.className = "hazard-box warning";
-          hazardBox.innerHTML = `<strong>⚠️ Weather Advisory:</strong> ${warnings.join(" • ")}. Please check Current Show Status above before heading out.`;
+          hazardBox.innerHTML = `<strong>⚠️ Weather Advisory:</strong> ${warnings.join(" • ")}. Please check the "Recent Updates" tab for any show impacts.`;
         } else {
           hazardBox.className = "hazard-box safe";
           hazardBox.innerHTML = `✅ No hazardous weather expected in the next 48 hours`;
         }
       } catch (e) {
         box.innerHTML = `<div>Live weather temporarily unavailable — click the National Weather Service button below for current Holland, NY conditions!</div>`;
-        hazardBox.textContent = "See the National Weather Service forecast below for 48-hour snow and wind details.";
+        hazardBox.textContent = "See the National Weather Service forecast below for 48-hour snow, ice, and wind details.";
       }
     }
     loadWeather();
