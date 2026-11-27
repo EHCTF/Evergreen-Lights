@@ -525,12 +525,12 @@
   <!-- Navigation Bar -->
   <nav>
     <div class="nav-tabs">
-      <button class="tab-btn active" onclick="openTab('home', this)">📍 Show Info &amp; Map</button>
-      <button class="tab-btn" onclick="openTab('gallery', this)">🎥 Past Shows &amp; Photos</button>
-      <button class="tab-btn" onclick="openTab('updates', this)">📢 Recent Updates</button>
-      <button class="tab-btn" onclick="openTab('weather', this)">❄️ Weather</button>
-      <button class="tab-btn" onclick="openTab('about', this)">👋 About Us</button>
-      <button class="tab-btn" onclick="openTab('awards', this)">🏆 Awards</button>
+      <button type="button" class="tab-btn active" onclick="openTab('home', this)">📍 Show Info &amp; Map</button>
+      <button type="button" class="tab-btn" onclick="openTab('gallery', this)">🎥 Past Shows &amp; Photos</button>
+      <button type="button" class="tab-btn" onclick="openTab('updates', this)">📢 Recent Updates</button>
+      <button type="button" class="tab-btn" onclick="openTab('weather', this)">❄️ Weather</button>
+      <button type="button" class="tab-btn" onclick="openTab('about', this)">👋 About Us</button>
+      <button type="button" class="tab-btn" onclick="openTab('awards', this)">🏆 Awards</button>
     </div>
   </nav>
 
@@ -549,7 +549,7 @@
           </ul>
 
           <!-- Smart button automatically routes from visitor's current location to exact GPS pin -->
-          <button class="btn-primary" onclick="getDirections()">
+          <button type="button" class="btn-primary" onclick="getDirections()">
             🚗 Get Directions from Current Location (Google Maps &amp; Apple Maps Pin)
           </button>
 
@@ -593,10 +593,10 @@
     <!-- ================= TAB 2: PAST SHOWS, VIDEOS & PHOTOS ================= -->
     <section id="gallery" class="tab-section">
       <div class="year-filters">
-        <button class="year-btn active" onclick="filterYear('all', this)">All Years</button>
-        <button class="year-btn" onclick="filterYear('2025', this)">2025 Show</button>
-        <button class="year-btn" onclick="filterYear('2024', this)">2024 Inaugural Show</button>
-        <button class="year-btn" onclick="filterYear('photos', this)">Photo &amp; Video Archive</button>
+        <button type="button" class="year-btn active" onclick="filterYear('all', this)">All Years</button>
+        <button type="button" class="year-btn" onclick="filterYear('2025', this)">2025 Show</button>
+        <button type="button" class="year-btn" onclick="filterYear('2024', this)">2024 Inaugural Show</button>
+        <button type="button" class="year-btn" onclick="filterYear('photos', this)">Photo &amp; Video Archive</button>
       </div>
 
       <!-- 2025 SHOW CARD -->
@@ -786,27 +786,26 @@
     </p>
   </footer>
 
+  <!-- CORE NAVIGATION SCRIPT (Isolated so external feeds can never block tab switching) -->
   <script>
-    // =========================================================================
-    // ZERO-CODE REMOTE UPDATES (OPTIONAL GOOGLE SHEETS LINK)
-    // Paste your "Published to Web -> CSV" Google Sheet URL inside the quotes below
-    // so anyone in your family can post updates or change driveway status from their phone!
-    // =========================================================================
-    const LIVE_UPDATES_CSV_URL = "";
-
-    // 1. Switch Top Navigation Tabs
     function openTab(tabId, clickedBtn) {
-      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      clickedBtn.classList.add('active');
+      document.querySelectorAll('.tab-section').forEach(function(sec) {
+        sec.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+      });
+      var target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+      if (clickedBtn) clickedBtn.classList.add('active');
     }
 
-    // 2. Filter Years in Past Shows Tab
     function filterYear(year, clickedBtn) {
-      document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
-      clickedBtn.classList.add('active');
-      document.querySelectorAll('.year-block').forEach(block => {
+      document.querySelectorAll('.year-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+      });
+      if (clickedBtn) clickedBtn.classList.add('active');
+      document.querySelectorAll('.year-block').forEach(function(block) {
         if (year === 'all' || block.dataset.year === year) {
           block.style.display = 'block';
         } else {
@@ -815,18 +814,27 @@
       });
     }
 
-    // 3. Smart GPS Directions (Apple Maps on iPhone/Mac, Google Maps everywhere else)
     function getDirections() {
-      const coords = "42.675750,-78.537713";
-      const isAppleDevice = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) && !window.MSStream;
+      var coords = "42.675750,-78.537713";
+      var isAppleDevice = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) && !window.MSStream;
       if (isAppleDevice) {
-        window.open(`https://maps.apple.com/?daddr=${coords}&dirflg=d`, "_blank");
+        window.open("https://maps.apple.com/?daddr=" + coords + "&dirflg=d", "_blank");
       } else {
-        window.open(`https://www.google.com/maps/dir/?api=1&destination=${coords}&travelmode=driving`, "_blank");
+        window.open("https://www.google.com/maps/dir/?api=1&destination=" + coords + "&travelmode=driving", "_blank");
       }
     }
+  </script>
 
-    // 4. Populate Today's Date Automatically in Weather -> Current Show Status
+  <!-- LIVE STATUS, WEATHER & GOOGLE SHEET UPDATES SCRIPT -->
+  <script>
+    // =========================================================================
+    // ZERO-CODE REMOTE UPDATES (OPTIONAL GOOGLE SHEETS LINK)
+    // Paste your "Published to Web -> CSV" Google Sheet URL inside the quotes below
+    // so anyone in your family can post updates or change driveway status from their phone!
+    // =========================================================================
+    const LIVE_UPDATES_CSV_URL = "";
+
+    // Populate Today's Date Automatically in Weather -> Current Show Status
     function updateCurrentDateLabel() {
       const dateEl = document.getElementById('current-date-label');
       const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
@@ -839,7 +847,7 @@
     }
     updateCurrentDateLabel();
 
-    // 5. Live Show Status Pill (Checks Eastern Time automatically)
+    // Live Show Status Pill (Checks Eastern Time automatically)
     function updateShowStatus() {
       const pill = document.getElementById('live-status');
       const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
@@ -876,7 +884,6 @@
         const nowMs = Date.now();
         const cutoffMs = nowMs + 48 * 3600 * 1000;
 
-        // Check Gridpoint data for Ice Accumulation + Weather Fog attributes
         if (gridUrl) {
           const gridRes = await fetch(gridUrl, { headers: { "Accept": "application/geo+json" } });
           if (gridRes.ok) {
@@ -916,7 +923,6 @@
           }
         }
 
-        // Also check the plain-English NWS 48-hour spot text forecast for "dense fog" or "fog"
         if (forecastUrl) {
           const fcRes = await fetch(forecastUrl, { headers: { "Accept": "application/geo+json" } });
           if (fcRes.ok) {
@@ -925,11 +931,11 @@
             for (const p of periods) {
               const startMs = Date.parse(p.startTime || "");
               if (!isNaN(startMs) && startMs < cutoffMs) {
-                const txt = `${p.shortForecast || ""} ${p.detailedForecast || ""}`.toLowerCase();
-                if (/dense fog/.test(txt)) {
+                const txt = ((p.shortForecast || "") + " " + (p.detailedForecast || "")).toLowerCase();
+                if (/\bdense fog\b/.test(txt)) {
                   result.hasDenseFog = true;
                   result.hasFog = true;
-                } else if (/fog/.test(txt)) {
+                } else if (/\bfog\b/.test(txt)) {
                   result.hasFog = true;
                 }
               }
@@ -942,7 +948,7 @@
       return result;
     }
 
-    // 6. Live Weather + 48-Hour Spot Hazard Check (6"+ Snow, 45+ mph Gusts, 0.10"+ Ice, or Fog/Dense Fog)
+    // Live Weather + 48-Hour Spot Hazard Check (6"+ Snow, 45+ mph Gusts, 0.10"+ Ice, or Fog/Dense Fog)
     async function loadWeather() {
       const box = document.getElementById('weather-widget');
       const hazardBox = document.getElementById('hazard-alert');
@@ -1026,7 +1032,6 @@
               }
               rolling48FreezingRain += hrIce;
 
-              // WMO codes 45 (Fog) & 48 (Depositing rime/freezing fog); dense fog <= 1/4 mile (~1320 ft)
               if (wCode === 45 || wCode === 48) {
                 omHasFog = true;
                 if (wCode === 48 || visFt <= 1320) {
@@ -1073,10 +1078,12 @@
     }
     loadWeather();
 
-    // 7. Optional Google Sheets Live Updates Loader (Zero-Code Phone Updates!)
+    // Optional Google Sheets Live Updates Loader (Zero-Code Phone Updates!)
     function parseCSV(text) {
       const rows = [];
       let row = [], cell = "", inQuotes = false;
+      const LF = String.fromCharCode(10);
+      const CR = String.fromCharCode(13);
       for (let i = 0; i < text.length; i++) {
         const c = text[i], next = text[i + 1];
         if (inQuotes) {
@@ -1086,10 +1093,8 @@
         } else {
           if (c === '"') { inQuotes = true; }
           else if (c === ',') { row.push(cell.trim()); cell = ""; }
-          else if (c === '
-' || (c === '' && next === '
-')) {
-            if (c === '') i++;
+          else if (c === LF || (c === CR && next === LF) || c === CR) {
+            if (c === CR && next === LF) i++;
             row.push(cell.trim()); rows.push(row); row = []; cell = "";
           } else { cell += c; }
         }
@@ -1112,7 +1117,6 @@
         const rows = parseCSV(await res.text());
         if (rows.length < 2) return;
 
-        // Expected Sheet Columns: Date | Color (red/green/status) | Title | Message
         const container = document.getElementById('live-sheet-updates');
         let html = "";
         for (let i = rows.length - 1; i >= 1; i--) {
