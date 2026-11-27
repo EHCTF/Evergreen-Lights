@@ -408,6 +408,12 @@
       font-size: 1.05rem;
     }
 
+    .status-report-box.warning {
+      background: rgba(214, 40, 40, 0.22);
+      border-color: rgba(244, 196, 48, 0.75);
+      color: #fff3cd;
+    }
+
     .weather-box {
       display: flex;
       flex-wrap: wrap;
@@ -659,14 +665,15 @@
     <!-- ================= TAB 3: RECENT UPDATES ================= -->
     <section id="updates" class="tab-section">
       <!--
-        HOW TO POST A NEW UPDATE:
-        - Use <div class="card update-green"> for positive / normal show updates (green box)
-        - Use <div class="card update-red"> for weather delays / advisories (red box)
-        Paste new updates at the top so visitors see the most recent post first!
+        OPTIONAL GOOGLE SHEET LIVE UPDATES CONTAINER:
+        If you paste a published Google Sheet CSV URL into LIVE_UPDATES_CSV_URL inside the <script> at the bottom,
+        new rows typed into your Google Sheet will automatically appear right at the top here without touching code!
       -->
+      <div id="live-sheet-updates"></div>
+
       <div class="card update-red">
         <span class="date-badge">November 27th, 2026</span>
-        <h3>⚠️ Icey Weather Impacts Operations</h3>
+        <h3>⚠️ Icy Weather Impact Operations</h3>
         <p>Freezing rain on Thanksgiving slowed down final prep for opening night (11/27). While the show will be operational tonight, final light prep and synchronization will be completed over the weekend. We apologize for the slight weather delay!</p>
       </div>
 
@@ -681,12 +688,7 @@
     <section id="weather" class="tab-section">
       <div class="card">
         <h2>🌨️ Current Show Status</h2>
-        <div class="status-report-box">
-          <!--
-            DAILY AUTO-DATE STATUS:
-            The date before the ":" updates automatically every day!
-            If a storm ever pauses the show or blocks the driveway, just edit the text inside <span id="status-message"> below!
-          -->
+        <div id="status-report-box" class="status-report-box">
           <strong><span id="current-date-label">Today</span>:</strong>
           <span id="status-message">Driveway is cleared and operations are normal</span>
         </div>
@@ -703,9 +705,9 @@
           <div>Loading live Holland, NY weather...</div>
         </div>
 
-        <!-- 48-Hour Hazardous Weather Spot Forecast Check (6"+ snow, 45+ mph gusts, or 0.10"+ ice) -->
+        <!-- 48-Hour Hazardous Weather Spot Forecast Check (6"+ snow, 45+ mph gusts, 0.10"+ ice, or fog/dense fog) -->
         <div id="hazard-alert" class="hazard-box">
-          Checking 48-hour spot forecast for snow, ice &amp; wind...
+          Checking 48-hour spot forecast for snow, ice, fog &amp; wind...
         </div>
 
         <div class="sub-map-links" style="margin-top: 1rem;">
@@ -785,6 +787,13 @@
   </footer>
 
   <script>
+    // =========================================================================
+    // ZERO-CODE REMOTE UPDATES (OPTIONAL GOOGLE SHEETS LINK)
+    // Paste your "Published to Web -> CSV" Google Sheet URL inside the quotes below
+    // so anyone in your family can post updates or change driveway status from their phone!
+    // =========================================================================
+    const LIVE_UPDATES_CSV_URL = "";
+
     // 1. Switch Top Navigation Tabs
     function openTab(tabId, clickedBtn) {
       document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
@@ -852,59 +861,104 @@
     }
     updateShowStatus();
 
-    // Helper: Fetch official NWS Gridpoint 48-hour Ice Accumulation (in inches) if available
-    async function fetchNws48HrIceInches() {
+    // Helper: Fetch official NWS 48-hour Ice Accumulation AND Fog/Dense Fog Mentions
+    async function fetchNwsSpotHazards() {
+      const result = { iceInches: 0, hasDenseFog: false, hasFog: false };
       try {
         const ptRes = await fetch("https://api.weather.gov/points/42.6758,-78.5377", {
           headers: { "Accept": "application/geo+json" }
         });
-        if (!ptRes.ok) return 0;
+        if (!ptRes.ok) return result;
         const ptData = await ptRes.json();
         const gridUrl = ptData.properties && ptData.properties.forecastGridData;
-        if (!gridUrl) return 0;
-
-        const gridRes = await fetch(gridUrl, { headers: { "Accept": "application/geo+json" } });
-        if (!gridRes.ok) return 0;
-        const gridData = await gridRes.json();
-        const iceSeries = gridData.properties && gridData.properties.iceAccumulation;
-        if (!iceSeries || !Array.isArray(iceSeries.values)) return 0;
+        const forecastUrl = ptData.properties && ptData.properties.forecast;
 
         const nowMs = Date.now();
         const cutoffMs = nowMs + 48 * 3600 * 1000;
-        let totalMm = 0;
 
-        for (const item of iceSeries.values) {
-          const parts = (item.validTime || "").split("/");
-          const startMs = Date.parse(parts[0]);
-          if (isNaN(startMs)) continue;
-          if (startMs < cutoffMs && startMs >= nowMs - 6 * 3600 * 1000) {
-            totalMm += (item.value || 0);
+        // Check Gridpoint data for Ice Accumulation + Weather Fog attributes
+        if (gridUrl) {
+          const gridRes = await fetch(gridUrl, { headers: { "Accept": "application/geo+json" } });
+          if (gridRes.ok) {
+            const gridData = await gridRes.json();
+            const iceSeries = gridData.properties && gridData.properties.iceAccumulation;
+            if (iceSeries && Array.isArray(iceSeries.values)) {
+              let totalMm = 0;
+              for (const item of iceSeries.values) {
+                const startMs = Date.parse((item.validTime || "").split("/")[0]);
+                if (!isNaN(startMs) && startMs < cutoffMs && startMs >= nowMs - 6 * 3600 * 1000) {
+                  totalMm += (item.value || 0);
+                }
+              }
+              result.iceInches = totalMm / 25.4;
+            }
+
+            const wxSeries = gridData.properties && gridData.properties.weather;
+            if (wxSeries && Array.isArray(wxSeries.values)) {
+              for (const item of wxSeries.values) {
+                const startMs = Date.parse((item.validTime || "").split("/")[0]);
+                if (!isNaN(startMs) && startMs < cutoffMs && startMs >= nowMs - 3 * 3600 * 1000) {
+                  const vals = Array.isArray(item.value) ? item.value : [];
+                  for (const v of vals) {
+                    const wxName = (v.weather || "").toLowerCase();
+                    if (wxName.includes("fog")) {
+                      result.hasFog = true;
+                      const attrs = (v.attributes || []).map(a => String(a).toLowerCase());
+                      const vis = v.visibility && typeof v.visibility.value === "number" ? v.visibility.value : null;
+                      if (attrs.includes("dense") || (vis !== null && vis <= 400)) {
+                        result.hasDenseFog = true;
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
-        // NWS gridpoint iceAccumulation is reported in millimeters; convert mm -> inches
-        return totalMm / 25.4;
+
+        // Also check the plain-English NWS 48-hour spot text forecast for "dense fog" or "fog"
+        if (forecastUrl) {
+          const fcRes = await fetch(forecastUrl, { headers: { "Accept": "application/geo+json" } });
+          if (fcRes.ok) {
+            const fcData = await fcRes.json();
+            const periods = (fcData.properties && fcData.properties.periods) || [];
+            for (const p of periods) {
+              const startMs = Date.parse(p.startTime || "");
+              if (!isNaN(startMs) && startMs < cutoffMs) {
+                const txt = `${p.shortForecast || ""} ${p.detailedForecast || ""}`.toLowerCase();
+                if (/dense fog/.test(txt)) {
+                  result.hasDenseFog = true;
+                  result.hasFog = true;
+                } else if (/fog/.test(txt)) {
+                  result.hasFog = true;
+                }
+              }
+            }
+          }
+        }
       } catch (err) {
-        return 0;
+        // Fallback smoothly to Open-Meteo if NWS API is unreachable
       }
+      return result;
     }
 
-    // 6. Live Weather + 48-Hour Spot Hazard Check (6"+ Snow, 45+ mph Wind Gusts, or 0.10"+ Ice)
+    // 6. Live Weather + 48-Hour Spot Hazard Check (6"+ Snow, 45+ mph Gusts, 0.10"+ Ice, or Fog/Dense Fog)
     async function loadWeather() {
       const box = document.getElementById('weather-widget');
       const hazardBox = document.getElementById('hazard-alert');
       try {
-        const [res, nwsIceInches] = await Promise.all([
+        const [res, nwsHazards] = await Promise.all([
           fetch(
-            "https://api.open-meteo.com/v1/forecast?latitude=42.67575&longitude=-78.537713&current=temperature_2m,apparent_temperature,snowfall,wind_speed_10m,weather_code&daily=snowfall_sum,wind_gusts_10m_max&hourly=temperature_2m,precipitation,rain,snowfall,wind_gusts_10m,weather_code&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York"
+            "https://api.open-meteo.com/v1/forecast?latitude=42.67575&longitude=-78.537713&current=temperature_2m,apparent_temperature,snowfall,wind_speed_10m,weather_code&daily=snowfall_sum,wind_gusts_10m_max&hourly=temperature_2m,precipitation,rain,snowfall,wind_gusts_10m,weather_code,visibility&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York"
           ),
-          fetchNws48HrIceInches()
+          fetchNwsSpotHazards()
         ]);
 
         const data = await res.json();
         const cur = data.current;
         const codes = {
           0: "Clear Sky ✨", 1: "Mainly Clear 🌙", 2: "Partly Cloudy ⛅", 3: "Overcast ☁️",
-          45: "Foggy 🌫️", 48: "Rime Fog 🌫️", 51: "Light Drizzle 🌧️", 53: "Drizzle 🌧️", 55: "Dense Drizzle 🌧️",
+          45: "Foggy 🌫️", 48: "Freezing / Dense Fog 🌫️", 51: "Light Drizzle 🌧️", 53: "Drizzle 🌧️", 55: "Dense Drizzle 🌧️",
           56: "Freezing Drizzle 🧊", 57: "Heavy Freezing Drizzle 🧊",
           61: "Light Rain 🌧️", 63: "Moderate Rain 🌧️", 65: "Heavy Rain 🌧️",
           66: "Freezing Rain 🧊", 67: "Heavy Freezing Rain 🧊",
@@ -924,7 +978,6 @@
           </div>
         `;
 
-        // Evaluate Today (index 0) and Tomorrow (index 1) + rolling next 48 hours from spot forecast
         const snowToday = (data.daily && data.daily.snowfall_sum) ? (data.daily.snowfall_sum[0] || 0) : 0;
         const snowTomorrow = (data.daily && data.daily.snowfall_sum) ? (data.daily.snowfall_sum[1] || 0) : 0;
         const gustToday = (data.daily && data.daily.wind_gusts_10m_max) ? (data.daily.wind_gusts_10m_max[0] || 0) : 0;
@@ -935,6 +988,8 @@
         let rolling48FreezingRain = 0;
         let todayFreezingRain = 0;
         let tomorrowFreezingRain = 0;
+        let omHasFog = (cur.weather_code === 45 || cur.weather_code === 48);
+        let omHasDenseFog = (cur.weather_code === 48);
 
         if (data.hourly && data.hourly.time) {
           const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
@@ -949,13 +1004,13 @@
           if (startIdx < 0) startIdx = 0;
           const endIdx = Math.min(startIdx + 48, data.hourly.time.length);
 
-          // Check hourly freezing precipitation (WMO freezing drizzle/rain codes 56, 57, 66, 67 OR liquid rain at <= 32F)
           for (let i = 0; i < data.hourly.time.length; i++) {
             const tStr = data.hourly.time[i];
             const wCode = data.hourly.weather_code ? data.hourly.weather_code[i] : 0;
             const tempF = data.hourly.temperature_2m ? data.hourly.temperature_2m[i] : 40;
             const precip = data.hourly.precipitation ? (data.hourly.precipitation[i] || 0) : 0;
             const rainAmt = data.hourly.rain ? (data.hourly.rain[i] || 0) : 0;
+            const visFt = data.hourly.visibility ? data.hourly.visibility[i] : 50000;
 
             const isFreezingCode = (wCode === 56 || wCode === 57 || wCode === 66 || wCode === 67);
             const isSubfreezingRain = (tempF <= 32 && rainAmt > 0);
@@ -970,11 +1025,21 @@
                 rolling48Gust = data.hourly.wind_gusts_10m[i];
               }
               rolling48FreezingRain += hrIce;
+
+              // WMO codes 45 (Fog) & 48 (Depositing rime/freezing fog); dense fog <= 1/4 mile (~1320 ft)
+              if (wCode === 45 || wCode === 48) {
+                omHasFog = true;
+                if (wCode === 48 || visFt <= 1320) {
+                  omHasDenseFog = true;
+                }
+              }
             }
           }
         }
 
-        const peakIce = Math.max(nwsIceInches, todayFreezingRain, tomorrowFreezingRain, rolling48FreezingRain);
+        const peakIce = Math.max(nwsHazards.iceInches, todayFreezingRain, tomorrowFreezingRain, rolling48FreezingRain);
+        const hasDenseFog = nwsHazards.hasDenseFog || omHasDenseFog;
+        const hasFog = nwsHazards.hasFog || omHasFog;
 
         const warnings = [];
         if (peakIce >= 0.10) {
@@ -988,6 +1053,11 @@
           const peakGust = Math.round(Math.max(gustToday, gustTomorrow, rolling48Gust));
           warnings.push(`High wind gusts forecast (up to ${peakGust} mph expected within the next 48 hours)`);
         }
+        if (hasDenseFog) {
+          warnings.push(`Dense fog forecast within the next 48 hours (reduced visibility)`);
+        } else if (hasFog) {
+          warnings.push(`Fog forecast within the next 48 hours`);
+        }
 
         if (warnings.length > 0) {
           hazardBox.className = "hazard-box warning";
@@ -998,10 +1068,80 @@
         }
       } catch (e) {
         box.innerHTML = `<div>Live weather temporarily unavailable — click the National Weather Service button below for current Holland, NY conditions!</div>`;
-        hazardBox.textContent = "See the National Weather Service forecast below for 48-hour snow, ice, and wind details.";
+        hazardBox.textContent = "See the National Weather Service forecast below for 48-hour snow, ice, fog, and wind details.";
       }
     }
     loadWeather();
+
+    // 7. Optional Google Sheets Live Updates Loader (Zero-Code Phone Updates!)
+    function parseCSV(text) {
+      const rows = [];
+      let row = [], cell = "", inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i], next = text[i + 1];
+        if (inQuotes) {
+          if (c === '"' && next === '"') { cell += '"'; i++; }
+          else if (c === '"') { inQuotes = false; }
+          else { cell += c; }
+        } else {
+          if (c === '"') { inQuotes = true; }
+          else if (c === ',') { row.push(cell.trim()); cell = ""; }
+          else if (c === '
+' || (c === '' && next === '
+')) {
+            if (c === '') i++;
+            row.push(cell.trim()); rows.push(row); row = []; cell = "";
+          } else { cell += c; }
+        }
+      }
+      if (cell.length > 0 || row.length > 0) { row.push(cell.trim()); rows.push(row); }
+      return rows;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    async function loadSheetUpdates() {
+      if (!LIVE_UPDATES_CSV_URL) return;
+      try {
+        const res = await fetch(LIVE_UPDATES_CSV_URL, { cache: "no-store" });
+        if (!res.ok) return;
+        const rows = parseCSV(await res.text());
+        if (rows.length < 2) return;
+
+        // Expected Sheet Columns: Date | Color (red/green/status) | Title | Message
+        const container = document.getElementById('live-sheet-updates');
+        let html = "";
+        for (let i = rows.length - 1; i >= 1; i--) {
+          const [dateTxt = "", typeTxt = "green", titleTxt = "", msgTxt = ""] = rows[i];
+          const kind = typeTxt.toLowerCase();
+          if (kind === "status" && msgTxt) {
+            document.getElementById('status-message').textContent = msgTxt;
+            const statusBox = document.getElementById('status-report-box');
+            if (titleTxt.toLowerCase().includes("red") || titleTxt.toLowerCase().includes("warn")) {
+              statusBox.classList.add('warning');
+            }
+            continue;
+          }
+          if (!titleTxt && !msgTxt) continue;
+          const cardClass = kind.includes("red") ? "update-red" : "update-green";
+          html += `
+            <div class="card ${cardClass}">
+              ${dateTxt ? `<span class="date-badge">${escapeHtml(dateTxt)}</span>` : ""}
+              ${titleTxt ? `<h3>${escapeHtml(titleTxt)}</h3>` : ""}
+              ${msgTxt ? `<p>${escapeHtml(msgTxt)}</p>` : ""}
+            </div>
+          `;
+        }
+        container.innerHTML = html;
+      } catch (e) {
+        console.warn("Could not load live Google Sheet updates:", e);
+      }
+    }
+    loadSheetUpdates();
   </script>
 </body>
 </html>
