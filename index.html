@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- EDIT WEBSITE TAB TITLE BELOW -->
   <title>Evergreen Hills Christmas Light Display | Holland, NY</title>
   <style>
     :root {
@@ -31,6 +30,13 @@
       color: var(--text-light);
       line-height: 1.6;
       min-height: 100vh;
+    }
+
+    /* Pure-CSS Tab Switching Fallback via Radio Inputs (Works even before JS runs!) */
+    .tab-radio {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
     }
 
     /* Festive String Lights Top Border */
@@ -122,6 +128,8 @@
     }
 
     .tab-btn {
+      display: inline-block;
+      user-select: none;
       background: transparent;
       color: var(--text-muted);
       border: 1px solid var(--border);
@@ -139,7 +147,13 @@
       border-color: rgba(255, 255, 255, 0.35);
     }
 
-    .tab-btn.active {
+    /* Active Tab Button Highlight via Pure CSS */
+    #tab-home:checked ~ nav label[for="tab-home"],
+    #tab-gallery:checked ~ nav label[for="tab-gallery"],
+    #tab-updates:checked ~ nav label[for="tab-updates"],
+    #tab-weather:checked ~ nav label[for="tab-weather"],
+    #tab-about:checked ~ nav label[for="tab-about"],
+    #tab-awards:checked ~ nav label[for="tab-awards"] {
       background: var(--red);
       color: #fff;
       border-color: var(--red);
@@ -158,7 +172,13 @@
       animation: fadeIn 0.25s ease;
     }
 
-    .tab-section.active {
+    /* Active Tab Content Display via Pure CSS */
+    #tab-home:checked ~ main #home,
+    #tab-gallery:checked ~ main #gallery,
+    #tab-updates:checked ~ main #updates,
+    #tab-weather:checked ~ main #weather,
+    #tab-about:checked ~ main #about,
+    #tab-awards:checked ~ main #awards {
       display: block;
     }
 
@@ -336,61 +356,7 @@
       border: 0;
     }
 
-    /* Photo Gallery Grid */
-    .photo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .photo-item {
-      background: var(--bg-card-alt);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .photo-item img, .photo-item video {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .photo-caption {
-      padding: 0.65rem 0.85rem;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    /* Full-Aspect Media Showcase Grid for Past Year Displays */
-    .media-showcase {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.25rem;
-      margin-top: 1rem;
-    }
-
-    .media-card {
-      background: var(--bg-card-alt);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .media-card img,
-    .media-card video {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      display: block;
-      background: #000;
-    }
-
-    /* Year Filter Buttons inside Past Shows */
+    /* Year Filter Buttons inside Past Shows (Pure CSS + JS) */
     .year-filters {
       display: flex;
       gap: 0.5rem;
@@ -399,6 +365,8 @@
     }
 
     .year-btn {
+      display: inline-block;
+      user-select: none;
       background: var(--bg-card-alt);
       color: var(--text-light);
       border: 1px solid var(--border);
@@ -408,11 +376,16 @@
       font-weight: 600;
     }
 
-    .year-btn.active {
+    #yr-all:checked ~ .year-filters label[for="yr-all"],
+    #yr-2025:checked ~ .year-filters label[for="yr-2025"],
+    #yr-2024:checked ~ .year-filters label[for="yr-2024"] {
       background: var(--gold);
       color: #07131d;
       border-color: var(--gold);
     }
+
+    #yr-2025:checked ~ .year-2024 { display: none; }
+    #yr-2024:checked ~ .year-2025 { display: none; }
 
     /* Update & Weather Badges */
     .date-badge {
@@ -530,6 +503,14 @@
 </head>
 <body>
 
+  <!-- Pure-CSS Tab Controllers (Unbreakable: switches tabs even if JavaScript is blocked!) -->
+  <input type="radio" name="main-tab" id="tab-home" class="tab-radio" checked />
+  <input type="radio" name="main-tab" id="tab-gallery" class="tab-radio" />
+  <input type="radio" name="main-tab" id="tab-updates" class="tab-radio" />
+  <input type="radio" name="main-tab" id="tab-weather" class="tab-radio" />
+  <input type="radio" name="main-tab" id="tab-about" class="tab-radio" />
+  <input type="radio" name="main-tab" id="tab-awards" class="tab-radio" />
+
   <!-- Twinkling Christmas Lights Top Bar -->
   <div class="light-strand" aria-hidden="true">
     <div class="bulb"></div><div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
@@ -551,19 +532,19 @@
   <!-- Navigation Bar -->
   <nav>
     <div class="nav-tabs">
-      <button type="button" class="tab-btn active" onclick="openTab('home', this)">📍 Show Info &amp; Map</button>
-      <button type="button" class="tab-btn" onclick="openTab('gallery', this)">🎥 Past Shows &amp; Photos</button>
-      <button type="button" class="tab-btn" onclick="openTab('updates', this)">📢 Recent Updates</button>
-      <button type="button" class="tab-btn" onclick="openTab('weather', this)">❄️ Weather</button>
-      <button type="button" class="tab-btn" onclick="openTab('about', this)">👋 About Us</button>
-      <button type="button" class="tab-btn" onclick="openTab('awards', this)">🏆 Awards</button>
+      <label for="tab-home" class="tab-btn">📍 Show Info &amp; Map</label>
+      <label for="tab-gallery" class="tab-btn">🎥 Past Shows &amp; Photos</label>
+      <label for="tab-updates" class="tab-btn">📢 Recent Updates</label>
+      <label for="tab-weather" class="tab-btn">❄️ Weather</label>
+      <label for="tab-about" class="tab-btn">👋 About Us</label>
+      <label for="tab-awards" class="tab-btn">🏆 Awards</label>
     </div>
   </nav>
 
   <main>
 
     <!-- ================= TAB 1: SHOW INFO & DIRECTIONS ================= -->
-    <section id="home" class="tab-section active">
+    <section id="home" class="tab-section">
       <div class="grid-2">
         <div class="card">
           <h2>🕒 Show Schedule</h2>
@@ -574,10 +555,9 @@
             <li><strong>Audio:</strong> <span class="radio-highlight">📻 Tune to 88.1 FM</span></li>
           </ul>
 
-          <!-- Smart button automatically routes from visitor's current location to exact GPS pin -->
-          <button type="button" class="btn-primary" onclick="getDirections()">
+          <a id="smart-dir-btn" class="btn-primary" href="https://www.google.com/maps/dir/?api=1&destination=42.675750,-78.537713&travelmode=driving" target="_blank" rel="noopener">
             🚗 Get Directions from Current Location (Google Maps &amp; Apple Maps Pin)
-          </button>
+          </a>
 
           <div class="sub-map-links">
             <a class="btn-outline" href="https://www.google.com/maps/dir/?api=1&destination=42.675750,-78.537713&travelmode=driving" target="_blank" rel="noopener">
@@ -618,14 +598,18 @@
 
     <!-- ================= TAB 2: PAST SHOWS, VIDEOS & PHOTOS ================= -->
     <section id="gallery" class="tab-section">
+      <input type="radio" name="yr-filter" id="yr-all" class="tab-radio" checked />
+      <input type="radio" name="yr-filter" id="yr-2025" class="tab-radio" />
+      <input type="radio" name="yr-filter" id="yr-2024" class="tab-radio" />
+
       <div class="year-filters">
-        <button type="button" class="year-btn active" onclick="filterYear('all', this)">All Years</button>
-        <button type="button" class="year-btn" onclick="filterYear('2025', this)">2025 Show</button>
-        <button type="button" class="year-btn" onclick="filterYear('2024', this)">2024 Inaugural Show</button>
+        <label for="yr-all" class="year-btn">All Years</label>
+        <label for="yr-2025" class="year-btn">2025 Show</label>
+        <label for="yr-2024" class="year-btn">2024 Inaugural Show</label>
       </div>
 
       <!-- 2025 SHOW CARD -->
-      <div class="card year-block" data-year="2025">
+      <div class="card year-2025">
         <span class="date-badge">2025 Season</span>
         <h2>🚁 2025 Light Show Aerial Drone Short</h2>
         <p style="color: var(--text-muted);">Check out a bird's-eye drone view of our 2025 holiday light display!</p>
@@ -648,7 +632,7 @@
       </div>
 
       <!-- 2024 SHOW CARD -->
-      <div class="card year-block" data-year="2024">
+      <div class="card year-2024">
         <span class="date-badge">2024 Season • Where It Officially Started</span>
         <h2>🎄 2024 Full Light Show</h2>
         <p style="color: var(--text-muted);">Our very first official light show season in 2024! Press play below to watch the full synchronized show.</p>
@@ -669,16 +653,10 @@
           </a>
         </p>
       </div>
-
     </section>
 
     <!-- ================= TAB 3: RECENT UPDATES ================= -->
     <section id="updates" class="tab-section">
-      <!--
-        OPTIONAL GOOGLE SHEET LIVE UPDATES CONTAINER:
-        If you paste a published Google Sheet CSV URL into LIVE_UPDATES_CSV_URL inside the <script> at the bottom,
-        new rows typed into your Google Sheet will automatically appear right at the top here without touching code!
-      -->
       <div id="live-sheet-updates"></div>
 
       <div class="card update-red">
@@ -715,7 +693,6 @@
           <div>Loading live Holland, NY weather...</div>
         </div>
 
-        <!-- 48-Hour Hazardous Weather Spot Forecast Check (6"+ snow, 45+ mph gusts, 0.10"+ ice, or fog/dense fog) -->
         <div id="hazard-alert" class="hazard-box">
           Checking 48-hour spot forecast for snow, ice, fog &amp; wind...
         </div>
@@ -796,76 +773,41 @@
     </p>
   </footer>
 
-  <!-- CORE NAVIGATION SCRIPT (Isolated so external feeds can never block tab switching) -->
   <script>
-    function openTab(tabId, clickedBtn) {
-      document.querySelectorAll('.tab-section').forEach(function(sec) {
-        sec.classList.remove('active');
-      });
-      document.querySelectorAll('.tab-btn').forEach(function(btn) {
-        btn.classList.remove('active');
-      });
-      var target = document.getElementById(tabId);
-      if (target) target.classList.add('active');
-      if (clickedBtn) clickedBtn.classList.add('active');
-    }
+    // Optional Google Sheet CSV link for remote phone updates:
+    var LIVE_UPDATES_CSV_URL = "";
 
-    function filterYear(year, clickedBtn) {
-      document.querySelectorAll('.year-btn').forEach(function(btn) {
-        btn.classList.remove('active');
-      });
-      if (clickedBtn) clickedBtn.classList.add('active');
-      document.querySelectorAll('.year-block').forEach(function(block) {
-        if (year === 'all' || block.dataset.year === year) {
-          block.style.display = 'block';
-        } else {
-          block.style.display = 'none';
-        }
-      });
-    }
-
-    function getDirections() {
-      var coords = "42.675750,-78.537713";
-      var isAppleDevice = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) && !window.MSStream;
-      if (isAppleDevice) {
-        window.open("https://maps.apple.com/?daddr=" + coords + "&dirflg=d", "_blank");
-      } else {
-        window.open("https://www.google.com/maps/dir/?api=1&destination=" + coords + "&travelmode=driving", "_blank");
+    // Upgrade Directions link to Apple Maps automatically on iPhone/iPad/Mac
+    (function setupSmartDirections() {
+      var btn = document.getElementById("smart-dir-btn");
+      var isApple = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) && !window.MSStream;
+      if (btn && isApple) {
+        btn.href = "https://maps.apple.com/?daddr=42.675750,-78.537713&dirflg=d";
       }
-    }
-  </script>
-
-  <!-- LIVE STATUS, WEATHER & GOOGLE SHEET UPDATES SCRIPT -->
-  <script>
-    // =========================================================================
-    // ZERO-CODE REMOTE UPDATES (OPTIONAL GOOGLE SHEETS LINK)
-    // Paste your "Published to Web -> CSV" Google Sheet URL inside the quotes below
-    // so anyone in your family can post updates or change driveway status from their phone!
-    // =========================================================================
-    const LIVE_UPDATES_CSV_URL = "";
+    })();
 
     // Populate Today's Date Automatically in Weather -> Current Show Status
-    function updateCurrentDateLabel() {
-      const dateEl = document.getElementById('current-date-label');
-      const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
-      const formatted = nowNY.toLocaleDateString("en-US", {
+    (function updateCurrentDateLabel() {
+      var dateEl = document.getElementById("current-date-label");
+      if (!dateEl) return;
+      var nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+      dateEl.textContent = nowNY.toLocaleDateString("en-US", {
         month: "long",
         day: "numeric",
         year: "numeric"
       });
-      dateEl.textContent = formatted;
-    }
-    updateCurrentDateLabel();
+    })();
 
     // Live Show Status Pill (Checks Eastern Time automatically)
-    function updateShowStatus() {
-      const pill = document.getElementById('live-status');
-      const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
-      const month = nowNY.getMonth() + 1;
-      const day = nowNY.getDate();
-      const hour = nowNY.getHours();
+    (function updateShowStatus() {
+      var pill = document.getElementById("live-status");
+      if (!pill) return;
+      var nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+      var month = nowNY.getMonth() + 1;
+      var day = nowNY.getDate();
+      var hour = nowNY.getHours();
 
-      const inSeason = (month === 11 && day >= 27) || (month === 12) || (month === 1 && day === 1);
+      var inSeason = (month === 11 && day >= 27) || (month === 12) || (month === 1 && day === 1);
       if (inSeason && hour >= 17 && hour < 21) {
         pill.textContent = "🟢 LIGHTS ARE ON NOW! Tune to 88.1 FM (Until 9:00 PM)";
         pill.style.background = "rgba(42, 157, 143, 0.25)";
@@ -876,33 +818,33 @@
       } else {
         pill.textContent = "🎄 Season Runs Daily Nov 27 – Jan 1 • 5:00 PM – 9:00 PM";
       }
-    }
-    updateShowStatus();
+    })();
 
-    // Helper: Fetch official NWS 48-hour Ice Accumulation AND Fog/Dense Fog Mentions
+    // Fetch official NWS 48-hour Ice Accumulation AND Fog/Dense Fog Mentions
     async function fetchNwsSpotHazards() {
-      const result = { iceInches: 0, hasDenseFog: false, hasFog: false };
+      var result = { iceInches: 0, hasDenseFog: false, hasFog: false };
       try {
-        const ptRes = await fetch("https://api.weather.gov/points/42.6758,-78.5377", {
+        var ptRes = await fetch("https://api.weather.gov/points/42.6758,-78.5377", {
           headers: { "Accept": "application/geo+json" }
         });
         if (!ptRes.ok) return result;
-        const ptData = await ptRes.json();
-        const gridUrl = ptData.properties && ptData.properties.forecastGridData;
-        const forecastUrl = ptData.properties && ptData.properties.forecast;
+        var ptData = await ptRes.json();
+        var gridUrl = ptData.properties && ptData.properties.forecastGridData;
+        var forecastUrl = ptData.properties && ptData.properties.forecast;
 
-        const nowMs = Date.now();
-        const cutoffMs = nowMs + 48 * 3600 * 1000;
+        var nowMs = Date.now();
+        var cutoffMs = nowMs + 48 * 3600 * 1000;
 
         if (gridUrl) {
-          const gridRes = await fetch(gridUrl, { headers: { "Accept": "application/geo+json" } });
+          var gridRes = await fetch(gridUrl, { headers: { "Accept": "application/geo+json" } });
           if (gridRes.ok) {
-            const gridData = await gridRes.json();
-            const iceSeries = gridData.properties && gridData.properties.iceAccumulation;
+            var gridData = await gridRes.json();
+            var iceSeries = gridData.properties && gridData.properties.iceAccumulation;
             if (iceSeries && Array.isArray(iceSeries.values)) {
-              let totalMm = 0;
-              for (const item of iceSeries.values) {
-                const startMs = Date.parse((item.validTime || "").split("/")[0]);
+              var totalMm = 0;
+              for (var k = 0; k < iceSeries.values.length; k++) {
+                var item = iceSeries.values[k];
+                var startMs = Date.parse((item.validTime || "").split("/")[0]);
                 if (!isNaN(startMs) && startMs < cutoffMs && startMs >= nowMs - 6 * 3600 * 1000) {
                   totalMm += (item.value || 0);
                 }
@@ -910,19 +852,21 @@
               result.iceInches = totalMm / 25.4;
             }
 
-            const wxSeries = gridData.properties && gridData.properties.weather;
+            var wxSeries = gridData.properties && gridData.properties.weather;
             if (wxSeries && Array.isArray(wxSeries.values)) {
-              for (const item of wxSeries.values) {
-                const startMs = Date.parse((item.validTime || "").split("/")[0]);
-                if (!isNaN(startMs) && startMs < cutoffMs && startMs >= nowMs - 3 * 3600 * 1000) {
-                  const vals = Array.isArray(item.value) ? item.value : [];
-                  for (const v of vals) {
-                    const wxName = (v.weather || "").toLowerCase();
-                    if (wxName.includes("fog")) {
+              for (var m = 0; m < wxSeries.values.length; m++) {
+                var wxItem = wxSeries.values[m];
+                var wxStart = Date.parse((wxItem.validTime || "").split("/")[0]);
+                if (!isNaN(wxStart) && wxStart < cutoffMs && wxStart >= nowMs - 3 * 3600 * 1000) {
+                  var vals = Array.isArray(wxItem.value) ? wxItem.value : [];
+                  for (var n = 0; n < vals.length; n++) {
+                    var v = vals[n];
+                    var wxName = (v.weather || "").toLowerCase();
+                    if (wxName.indexOf("fog") !== -1) {
                       result.hasFog = true;
-                      const attrs = (v.attributes || []).map(a => String(a).toLowerCase());
-                      const vis = v.visibility && typeof v.visibility.value === "number" ? v.visibility.value : null;
-                      if (attrs.includes("dense") || (vis !== null && vis <= 400)) {
+                      var attrs = (v.attributes || []).map(function(a) { return String(a).toLowerCase(); });
+                      var vis = v.visibility && typeof v.visibility.value === "number" ? v.visibility.value : null;
+                      if (attrs.indexOf("dense") !== -1 || (vis !== null && vis <= 400)) {
                         result.hasDenseFog = true;
                       }
                     }
@@ -934,18 +878,19 @@
         }
 
         if (forecastUrl) {
-          const fcRes = await fetch(forecastUrl, { headers: { "Accept": "application/geo+json" } });
+          var fcRes = await fetch(forecastUrl, { headers: { "Accept": "application/geo+json" } });
           if (fcRes.ok) {
-            const fcData = await fcRes.json();
-            const periods = (fcData.properties && fcData.properties.periods) || [];
-            for (const p of periods) {
-              const startMs = Date.parse(p.startTime || "");
-              if (!isNaN(startMs) && startMs < cutoffMs) {
-                const txt = ((p.shortForecast || "") + " " + (p.detailedForecast || "")).toLowerCase();
-                if (/\bdense fog\b/.test(txt)) {
+            var fcData = await fcRes.json();
+            var periods = (fcData.properties && fcData.properties.periods) || [];
+            for (var pIdx = 0; pIdx < periods.length; pIdx++) {
+              var p = periods[pIdx];
+              var pStart = Date.parse(p.startTime || "");
+              if (!isNaN(pStart) && pStart < cutoffMs) {
+                var txt = " " + ((p.shortForecast || "") + " " + (p.detailedForecast || "")).toLowerCase().replace(/[^a-z0-9]+/g, " ") + " ";
+                if (txt.indexOf(" dense fog ") !== -1) {
                   result.hasDenseFog = true;
                   result.hasFog = true;
-                } else if (/\bfog\b/.test(txt)) {
+                } else if (txt.indexOf(" fog ") !== -1) {
                   result.hasFog = true;
                 }
               }
@@ -953,26 +898,28 @@
           }
         }
       } catch (err) {
-        // Fallback smoothly to Open-Meteo if NWS API is unreachable
+        // Fallback smoothly to Open-Meteo
       }
       return result;
     }
 
     // Live Weather + 48-Hour Spot Hazard Check (6"+ Snow, 45+ mph Gusts, 0.10"+ Ice, or Fog/Dense Fog)
     async function loadWeather() {
-      const box = document.getElementById('weather-widget');
-      const hazardBox = document.getElementById('hazard-alert');
+      var box = document.getElementById("weather-widget");
+      var hazardBox = document.getElementById("hazard-alert");
       try {
-        const [res, nwsHazards] = await Promise.all([
+        var responses = await Promise.all([
           fetch(
             "https://api.open-meteo.com/v1/forecast?latitude=42.67575&longitude=-78.537713&current=temperature_2m,apparent_temperature,snowfall,wind_speed_10m,weather_code&daily=snowfall_sum,wind_gusts_10m_max&hourly=temperature_2m,precipitation,rain,snowfall,wind_gusts_10m,weather_code,visibility&forecast_days=3&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FNew_York"
           ),
           fetchNwsSpotHazards()
         ]);
 
-        const data = await res.json();
-        const cur = data.current;
-        const codes = {
+        var res = responses[0];
+        var nwsHazards = responses[1];
+        var data = await res.json();
+        var cur = data.current;
+        var codes = {
           0: "Clear Sky ✨", 1: "Mainly Clear 🌙", 2: "Partly Cloudy ⛅", 3: "Overcast ☁️",
           45: "Foggy 🌫️", 48: "Freezing / Dense Fog 🌫️", 51: "Light Drizzle 🌧️", 53: "Drizzle 🌧️", 55: "Dense Drizzle 🌧️",
           56: "Freezing Drizzle 🧊", 57: "Heavy Freezing Drizzle 🧊",
@@ -981,59 +928,58 @@
           71: "Light Snow ❄️", 73: "Moderate Snow ❄️", 75: "Heavy Snow ❄️", 77: "Snow Grains ❄️",
           85: "Snow Showers 🌨️", 86: "Heavy Snow Showers 🌨️"
         };
-        const desc = codes[cur.weather_code] || "Winter Conditions ❄️";
-        box.innerHTML = `
-          <div>
-            <div class="temp-big">${Math.round(cur.temperature_2m)}°F</div>
-            <div><strong>${desc}</strong></div>
-          </div>
-          <div>
-            <div><strong>Feels Like:</strong> ${Math.round(cur.apparent_temperature)}°F</div>
-            <div><strong>Wind:</strong> ${Math.round(cur.wind_speed_10m)} mph</div>
-            <div><strong>Current Snowfall:</strong> ${cur.snowfall}"</div>
-          </div>
-        `;
+        var desc = codes[cur.weather_code] || "Winter Conditions ❄️";
+        box.innerHTML =
+          "<div>" +
+            "<div class=\"temp-big\">" + Math.round(cur.temperature_2m) + "°F</div>" +
+            "<div><strong>" + desc + "</strong></div>" +
+          "</div>" +
+          "<div>" +
+            "<div><strong>Feels Like:</strong> " + Math.round(cur.apparent_temperature) + "°F</div>" +
+            "<div><strong>Wind:</strong> " + Math.round(cur.wind_speed_10m) + " mph</div>" +
+            "<div><strong>Current Snowfall:</strong> " + cur.snowfall + "\"</div>" +
+          "</div>";
 
-        const snowToday = (data.daily && data.daily.snowfall_sum) ? (data.daily.snowfall_sum[0] || 0) : 0;
-        const snowTomorrow = (data.daily && data.daily.snowfall_sum) ? (data.daily.snowfall_sum[1] || 0) : 0;
-        const gustToday = (data.daily && data.daily.wind_gusts_10m_max) ? (data.daily.wind_gusts_10m_max[0] || 0) : 0;
-        const gustTomorrow = (data.daily && data.daily.wind_gusts_10m_max) ? (data.daily.wind_gusts_10m_max[1] || 0) : 0;
+        var snowToday = (data.daily && data.daily.snowfall_sum) ? (data.daily.snowfall_sum[0] || 0) : 0;
+        var snowTomorrow = (data.daily && data.daily.snowfall_sum) ? (data.daily.snowfall_sum[1] || 0) : 0;
+        var gustToday = (data.daily && data.daily.wind_gusts_10m_max) ? (data.daily.wind_gusts_10m_max[0] || 0) : 0;
+        var gustTomorrow = (data.daily && data.daily.wind_gusts_10m_max) ? (data.daily.wind_gusts_10m_max[1] || 0) : 0;
 
-        let rolling48Snow = 0;
-        let rolling48Gust = 0;
-        let rolling48FreezingRain = 0;
-        let todayFreezingRain = 0;
-        let tomorrowFreezingRain = 0;
-        let omHasFog = (cur.weather_code === 45 || cur.weather_code === 48);
-        let omHasDenseFog = (cur.weather_code === 48);
+        var rolling48Snow = 0;
+        var rolling48Gust = 0;
+        var rolling48FreezingRain = 0;
+        var todayFreezingRain = 0;
+        var tomorrowFreezingRain = 0;
+        var omHasFog = (cur.weather_code === 45 || cur.weather_code === 48);
+        var omHasDenseFog = (cur.weather_code === 48);
 
         if (data.hourly && data.hourly.time) {
-          const nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
-          const pad = n => String(n).padStart(2, '0');
-          const todayStr = `${nowNY.getFullYear()}-${pad(nowNY.getMonth() + 1)}-${pad(nowNY.getDate())}`;
-          const tmrwDate = new Date(nowNY);
+          var nowNY = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+          var pad = function(num) { return String(num).padStart(2, "0"); };
+          var todayStr = nowNY.getFullYear() + "-" + pad(nowNY.getMonth() + 1) + "-" + pad(nowNY.getDate());
+          var tmrwDate = new Date(nowNY);
           tmrwDate.setDate(tmrwDate.getDate() + 1);
-          const tmrwStr = `${tmrwDate.getFullYear()}-${pad(tmrwDate.getMonth() + 1)}-${pad(tmrwDate.getDate())}`;
-          const curHourPrefix = `${todayStr}T${pad(nowNY.getHours())}`;
+          var tmrwStr = tmrwDate.getFullYear() + "-" + pad(tmrwDate.getMonth() + 1) + "-" + pad(tmrwDate.getDate());
+          var curHourPrefix = todayStr + "T" + pad(nowNY.getHours());
 
-          let startIdx = data.hourly.time.findIndex(t => t.startsWith(curHourPrefix));
+          var startIdx = data.hourly.time.findIndex(function(t) { return t.indexOf(curHourPrefix) === 0; });
           if (startIdx < 0) startIdx = 0;
-          const endIdx = Math.min(startIdx + 48, data.hourly.time.length);
+          var endIdx = Math.min(startIdx + 48, data.hourly.time.length);
 
-          for (let i = 0; i < data.hourly.time.length; i++) {
-            const tStr = data.hourly.time[i];
-            const wCode = data.hourly.weather_code ? data.hourly.weather_code[i] : 0;
-            const tempF = data.hourly.temperature_2m ? data.hourly.temperature_2m[i] : 40;
-            const precip = data.hourly.precipitation ? (data.hourly.precipitation[i] || 0) : 0;
-            const rainAmt = data.hourly.rain ? (data.hourly.rain[i] || 0) : 0;
-            const visFt = data.hourly.visibility ? data.hourly.visibility[i] : 50000;
+          for (var i = 0; i < data.hourly.time.length; i++) {
+            var tStr = data.hourly.time[i];
+            var wCode = data.hourly.weather_code ? data.hourly.weather_code[i] : 0;
+            var tempF = data.hourly.temperature_2m ? data.hourly.temperature_2m[i] : 40;
+            var precip = data.hourly.precipitation ? (data.hourly.precipitation[i] || 0) : 0;
+            var rainAmt = data.hourly.rain ? (data.hourly.rain[i] || 0) : 0;
+            var visFt = data.hourly.visibility ? data.hourly.visibility[i] : 50000;
 
-            const isFreezingCode = (wCode === 56 || wCode === 57 || wCode === 66 || wCode === 67);
-            const isSubfreezingRain = (tempF <= 32 && rainAmt > 0);
-            const hrIce = isFreezingCode ? precip : (isSubfreezingRain ? rainAmt : 0);
+            var isFreezingCode = (wCode === 56 || wCode === 57 || wCode === 66 || wCode === 67);
+            var isSubfreezingRain = (tempF <= 32 && rainAmt > 0);
+            var hrIce = isFreezingCode ? precip : (isSubfreezingRain ? rainAmt : 0);
 
-            if (tStr.startsWith(todayStr)) todayFreezingRain += hrIce;
-            if (tStr.startsWith(tmrwStr)) tomorrowFreezingRain += hrIce;
+            if (tStr.indexOf(todayStr) === 0) todayFreezingRain += hrIce;
+            if (tStr.indexOf(tmrwStr) === 0) tomorrowFreezingRain += hrIce;
 
             if (i >= startIdx && i < endIdx) {
               rolling48Snow += (data.hourly.snowfall[i] || 0);
@@ -1052,110 +998,41 @@
           }
         }
 
-        const peakIce = Math.max(nwsHazards.iceInches, todayFreezingRain, tomorrowFreezingRain, rolling48FreezingRain);
-        const hasDenseFog = nwsHazards.hasDenseFog || omHasDenseFog;
-        const hasFog = nwsHazards.hasFog || omHasFog;
+        var peakIce = Math.max(nwsHazards.iceInches, todayFreezingRain, tomorrowFreezingRain, rolling48FreezingRain);
+        var hasDenseFog = nwsHazards.hasDenseFog || omHasDenseFog;
+        var hasFog = nwsHazards.hasFog || omHasFog;
 
-        const warnings = [];
+        var warnings = [];
         if (peakIce >= 0.10) {
-          warnings.push(`Ice accumulation forecast (up to ${peakIce.toFixed(2)}" expected within the next 48 hours)`);
+          warnings.push("Ice accumulation forecast (up to " + peakIce.toFixed(2) + "\" expected within the next 48 hours)");
         }
         if (snowToday >= 6 || snowTomorrow >= 6 || rolling48Snow >= 6) {
-          const peakSnow = Math.max(snowToday, snowTomorrow, rolling48Snow).toFixed(1);
-          warnings.push(`Heavy snowfall forecast (up to ${peakSnow}" expected within the next 48 hours)`);
+          var peakSnow = Math.max(snowToday, snowTomorrow, rolling48Snow).toFixed(1);
+          warnings.push("Heavy snowfall forecast (up to " + peakSnow + "\" expected within the next 48 hours)");
         }
         if (gustToday >= 45 || gustTomorrow >= 45 || rolling48Gust >= 45) {
-          const peakGust = Math.round(Math.max(gustToday, gustTomorrow, rolling48Gust));
-          warnings.push(`High wind gusts forecast (up to ${peakGust} mph expected within the next 48 hours)`);
+          var peakGust = Math.round(Math.max(gustToday, gustTomorrow, rolling48Gust));
+          warnings.push("High wind gusts forecast (up to " + peakGust + " mph expected within the next 48 hours)");
         }
         if (hasDenseFog) {
-          warnings.push(`Dense fog forecast within the next 48 hours (reduced visibility)`);
+          warnings.push("Dense fog forecast within the next 48 hours (reduced visibility)");
         } else if (hasFog) {
-          warnings.push(`Fog forecast within the next 48 hours`);
+          warnings.push("Fog forecast within the next 48 hours");
         }
 
         if (warnings.length > 0) {
           hazardBox.className = "hazard-box warning";
-          hazardBox.innerHTML = `<strong>⚠️ Weather Advisory:</strong> ${warnings.join(" • ")}. Please check the "Recent Updates" tab for any show impacts.`;
+          hazardBox.innerHTML = "<strong>⚠️ Weather Advisory:</strong> " + warnings.join(" • ") + ". Please check the \"Recent Updates\" tab for any show impacts.";
         } else {
           hazardBox.className = "hazard-box safe";
-          hazardBox.innerHTML = `✅ No hazardous weather expected in the next 48 hours`;
+          hazardBox.innerHTML = "✅ No hazardous weather expected in the next 48 hours";
         }
       } catch (e) {
-        box.innerHTML = `<div>Live weather temporarily unavailable — click the National Weather Service button below for current Holland, NY conditions!</div>`;
+        box.innerHTML = "<div>Live weather temporarily unavailable — click the National Weather Service button below for current Holland, NY conditions!</div>";
         hazardBox.textContent = "See the National Weather Service forecast below for 48-hour snow, ice, fog, and wind details.";
       }
     }
     loadWeather();
-
-    // Optional Google Sheets Live Updates Loader (Zero-Code Phone Updates!)
-    function parseCSV(text) {
-      const rows = [];
-      let row = [], cell = "", inQuotes = false;
-      const LF = String.fromCharCode(10);
-      const CR = String.fromCharCode(13);
-      for (let i = 0; i < text.length; i++) {
-        const c = text[i], next = text[i + 1];
-        if (inQuotes) {
-          if (c === '"' && next === '"') { cell += '"'; i++; }
-          else if (c === '"') { inQuotes = false; }
-          else { cell += c; }
-        } else {
-          if (c === '"') { inQuotes = true; }
-          else if (c === ',') { row.push(cell.trim()); cell = ""; }
-          else if (c === LF || (c === CR && next === LF) || c === CR) {
-            if (c === CR && next === LF) i++;
-            row.push(cell.trim()); rows.push(row); row = []; cell = "";
-          } else { cell += c; }
-        }
-      }
-      if (cell.length > 0 || row.length > 0) { row.push(cell.trim()); rows.push(row); }
-      return rows;
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    async function loadSheetUpdates() {
-      if (!LIVE_UPDATES_CSV_URL) return;
-      try {
-        const res = await fetch(LIVE_UPDATES_CSV_URL, { cache: "no-store" });
-        if (!res.ok) return;
-        const rows = parseCSV(await res.text());
-        if (rows.length < 2) return;
-
-        const container = document.getElementById('live-sheet-updates');
-        let html = "";
-        for (let i = rows.length - 1; i >= 1; i--) {
-          const [dateTxt = "", typeTxt = "green", titleTxt = "", msgTxt = ""] = rows[i];
-          const kind = typeTxt.toLowerCase();
-          if (kind === "status" && msgTxt) {
-            document.getElementById('status-message').textContent = msgTxt;
-            const statusBox = document.getElementById('status-report-box');
-            if (titleTxt.toLowerCase().includes("red") || titleTxt.toLowerCase().includes("warn")) {
-              statusBox.classList.add('warning');
-            }
-            continue;
-          }
-          if (!titleTxt && !msgTxt) continue;
-          const cardClass = kind.includes("red") ? "update-red" : "update-green";
-          html += `
-            <div class="card ${cardClass}">
-              ${dateTxt ? `<span class="date-badge">${escapeHtml(dateTxt)}</span>` : ""}
-              ${titleTxt ? `<h3>${escapeHtml(titleTxt)}</h3>` : ""}
-              ${msgTxt ? `<p>${escapeHtml(msgTxt)}</p>` : ""}
-            </div>
-          `;
-        }
-        container.innerHTML = html;
-      } catch (e) {
-        console.warn("Could not load live Google Sheet updates:", e);
-      }
-    }
-    loadSheetUpdates();
   </script>
 </body>
 </html>
